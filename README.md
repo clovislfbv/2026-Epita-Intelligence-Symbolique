@@ -131,6 +131,7 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [A2](#a2--agent-llm-assiste-pour-la-preuve-formelle) | Agent LLM-assiste pour la preuve formelle | 4/5 |
 | [A3](#a3--theoreme-darrow-par-preuve-automatisee-satz3lean) | Theoreme d'Arrow par preuve automatisee (SAT/Z3/Lean) | 4/5 |
 | [A4](#a4--bibliotheque-de-preuves-mathlib--extensions) | Bibliotheque de preuves Mathlib — extensions | 3/5 |
+| [A5](#a5--mariages-stables-gale-shapley--preuve-formelle-et-extensions-en-lean-4) | Mariages stables Gale-Shapley : preuve formelle et extensions en Lean 4 | 3/5 |
 
 ### Categorie B : Logique Formelle, SAT et Demonstration Automatique
 
@@ -170,8 +171,7 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [E2](#e2--encheres-combinatoires-et-allocation-de-biens-publics) | Encheres combinatoires et allocation de biens publics | 4/5 |
 | [E3](#e3--jeux-cooperatifs-et-valeur-de-shapley) | Jeux cooperatifs et valeur de Shapley | 3/5 |
 | [E4](#e4--conception-de-mecanismes-resistants-a-la-manipulation) | Conception de mecanismes resistants a la manipulation | 4/5 |
-| [E5](#e5--choix-social-computationnel--simulation-et-manipulation-electorale) | Choix social computationnel — simulation et manipulation electorale | 3/5 |
-| [E6](#e6--jeux-combinatoires-et-theorie-de-sprague-grundy) | Jeux combinatoires et theorie de Sprague-Grundy | 3/5 |
+| [E5](#e5--counterfactual-regret-minimization-cfr-et-poker-ia) | Counterfactual Regret Minimization (CFR) et poker IA | 3/5 |
 
 ### Categorie F : Smart Contracts et Blockchain Symbolique
 
@@ -219,6 +219,7 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [J2](#j2--agent-cognitif-hybride-symbolique--subsymbolique) | Agent cognitif hybride (symbolique + subsymbolique) | 4/5 |
 | [J3](#j3--serveur-mcp-doutils-danalyse-symbolique) | Serveur MCP d'outils d'analyse symbolique | 3/5 |
 | [J4](#j4--integration-llm--solveurs-symboliques-llm-as-a-reasoner) | Integration LLM + solveurs symboliques (LLM-as-a-reasoner) | 4/5 |
+| [J5](#j5--apprentissage-par-renforcement-multi-agents-marl-et-emergence-de-cooperation) | Apprentissage par renforcement multi-agents (MARL) et emergence de cooperation | 4/5 |
 
 ### Categorie K : Cryptographie Symbolique et Securite
 
@@ -249,6 +250,7 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [M3](#m3--regression-symbolique--decouvrir-des-equations-a-partir-de-donnees) | Regression symbolique -- decouvrir des equations a partir de donnees | 3/5 |
 | [M4](#m4--decouverte-scientifique-automatisee-par-regression-symbolique-et-llm) | Decouverte scientifique automatisee par regression symbolique et LLM | 4/5 |
 | [M5](#m5--evaluation-comparee-llm-vs-approches-symboliques-sur-un-benchmark) | Evaluation comparee LLM vs. approches symboliques sur un benchmark | 2/5 |
+| [M6](#m6--theorie-de-linformation-integree-iit-et-conscience-artificielle-par-pyphi) | Theorie de l'Information Integree (IIT) et conscience artificielle par PyPhi | 3/5 |
 
 ### Categorie N : Raisonnement Causal et Decision
 
@@ -331,6 +333,7 @@ La preuve formelle d'algorithmes en Lean 4 consiste a specifier la correction fo
 | Lean-2 Dependent Types | [SymbolicAI/Lean/Lean-2-DependentTypes.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-2-DependentTypes.ipynb) | Types dependants, specifications |
 | Lean-3 Propositions | [SymbolicAI/Lean/Lean-3-Propositions.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-3-Propositions.ipynb) | Theoremes, tactiques de base |
 | Lean-5 Tactics | [SymbolicAI/Lean/Lean-5-Tactics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-5-Tactics.ipynb) | Tactiques avancees (simp, omega) |
+| Conway Lean (Surreals) | [GameTheory/conway_lean/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory/conway_lean/) | Nombres surreels en Lean 4 |
 
 ### References externes
 - Avigad, J. et al. (2024). *Theorem Proving in Lean 4*. [lean-lang.org](https://lean-lang.org/theorem_proving_in_lean4/)
@@ -389,10 +392,11 @@ Le theoreme d'impossibilite d'Arrow (1951) affirme qu'aucune regle d'agregation 
 
 | Notebook | Chemin | Pertinence |
 |----------|--------|------------|
-| GT-16d Arrow SAT | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Theoreme d'Arrow par encodage SAT |
-| GT-16e Arrow Z3 | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Theoreme d'Arrow par SMT (Z3) |
-| GT-16f Arrow Lean | [GameTheory/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory) | Theoreme d'Arrow en Lean 4 |
-| Lean-2b Types Dependants | [SymbolicAI/Lean/Lean-2b-DependentTypes.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-2b-DependentTypes.ipynb) | Types dependants, preuves formelles |
+| Arrow SAT | [GameTheory/SocialChoice/01-Arrow-Impossibility-Theorem.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/01-Arrow-Impossibility-Theorem.ipynb) | Theoreme d'Arrow par encodage SAT |
+| Arrow SMT (Z3) | [GameTheory/SocialChoice/04-Computational-Aggregation-SAT-Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/04-Computational-Aggregation-SAT-Z3.ipynb) | Theoreme d'Arrow par SMT (Z3) |
+| Arrow Lean | [GameTheory/SocialChoice/02-Lean-SocialChoice-Formal.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/02-Lean-SocialChoice-Formal.ipynb) | Theoreme d'Arrow en Lean 4 |
+| Arrow Voting Methods | [GameTheory/SocialChoice/03-Voting-Methods.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/03-Voting-Methods.ipynb) | Methodes de vote, Arrow et au-dela |
+| Lean-2 Types Dependants | [SymbolicAI/Lean/Lean-2-Dependent-Types.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-2-Dependent-Types.ipynb) | Types dependants, preuves formelles |
 
 ### References externes
 - Arrow, K.J. (1951). *Social Choice and Individual Values*. 2nd ed. 1963, Wiley. [cowles.yale.edu](https://cowles.yale.edu/sites/default/files/files/pub/mon/m12-2-all.pdf)
@@ -431,6 +435,35 @@ Mathlib4 est la bibliotheque mathematique de Lean 4, contenant plus de 1.5 milli
 - The Mathlib Community (2020). "The Lean Mathematical Library." *CPP 2020*. [dl.acm.org](https://dl.acm.org/doi/10.1145/3372885.3373824)
 - van Doorn, F. et al. (2023). "Maintaining a Library of Formal Mathematics." *ITP*. [Springer](https://link.springer.com/chapter/10.1007/978-3-031-40355-9_12)
 - Lean 4 Documentation. [lean-lang.org](https://lean-lang.org/)
+
+### Difficulte : 3/5
+
+
+#### A5 — Mariages stables Gale-Shapley : preuve formelle et extensions en Lean 4
+
+Le theoreme de Gale-Shapley (1962) garantit l'existence d'un mariage stable pour tout profil de preferences des hommes et des femmes, et l'algorithme correspondant trouve un tel mariage en temps O(n^2). Un mariage est stable si aucun couple (homme, femme) prefere mutuellement se quitter pour s'apparier. Ce sujet propose de formaliser ce resultat classique en Lean 4 en suivant le port existant dans CoursIA (GameTheory/stable_marriage_lean/), de prouver la correction et la terminaison de l'algorithme, et d'explorer les extensions : mariages stables avec preferences incompletes, problemes d'allocation ecole-eleve (college admissions), et la structure des treillis des mariages stables. L'etude des proprietes strategiques (le cote proposant est favorise) relie ce sujet a la theorie des mecanismes.
+
+### Objectifs
+- Comprendre et implementer l'algorithme de Gale-Shapley en Python, verifier la stabilite sur des instances aleatoires
+- Formaliser le theoreme d'existence du mariage stable en Lean 4 en suivant le port CoursIA (StableMarriage.lean)
+- Prouver la correction (le resultat est un mariage stable) et la terminaison (O(n^2)) de l'algorithme
+- Explorer les extensions : preferences incompletes, couples impossibles, et la structure de treillis des mariages stables
+- Analyser les proprietes strategiques (truthfulness du cote proposant) et les relier a la theorie des mecanismes
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Stable Marriage Lean | [GameTheory/stable_marriage_lean/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/GameTheory/stable_marriage_lean/) | Port Lean 4 de Gale-Shapley |
+| Lean-4 Mathlib | [SymbolicAI/Lean/Lean-4-Mathlib.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-4-Mathlib.ipynb) | Structures Mathlib (finset, list) |
+| Lean-5 Tactics | [SymbolicAI/Lean/Lean-5-Tactics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Lean/Lean-5-Tactics.ipynb) | Tactiques de preuve |
+| SocialChoice Arrow | [GameTheory/SocialChoice/01-Arrow-Impossibility-Theorem.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/01-Arrow-Impossibility-Theorem.ipynb) | Choix social, connexions mechanism design |
+
+### References externes
+- Gale, D. & Shapley, L.S. (1962). "College Admissions and the Stability of Marriage." *American Mathematical Monthly*, 69(1), 9-15. [JSTOR](https://www.jstor.org/stable/2312726)
+- Gusfield, D. & Irving, R.W. (1989). *The Stable Marriage Problem: Structure and Algorithms*. MIT Press.
+- Roth, A.E. (2008). "Deferred Acceptance Algorithms: History, Theory, Practice, and Open Questions." *International Journal of Game Theory*, 36, 537-569. [Springer](https://doi.org/10.1007/s00182-008-0117-6)
+- Mathlib Stable Marriage. [leanprover-community](https://github.com/leanprover-community/mathlib4/)
 
 ### Difficulte : 3/5
 
@@ -901,70 +934,6 @@ La planification temporelle pour systemes cyber-physiques (CPS) etend la planifi
 
 ### Difficulte : 3/5
 
----
-
-#### D3 — Ordonnancement multi-agent par CSP distribue
-
-L'ordonnancement multi-agent par CSP distribue (DisCSP) modelise un probleme ou plusieurs agents autonomes (drones, robots collaboratifs, vehicules) doivent coordonner leurs horaires et leurs ressources sans centralisateur, chaque agent ne connaissant que ses propres contraintes et un sous-ensemble des variables du probleme global. Les protocoles de resolution distribues tels que ABT (Asynchronous Backtracking) et AWC (Asynchronous Weak-Commitment) permettent aux agents d'echanger des messages pour resoudre les conflits sans partager l'integralite de leur etat interne. La convergence de ces algorithmes depend de la topologie du reseau de contraintes et de la strategie d'ordonnancement des messages. Ce sujet aborde les compromis entre confidentialite (les agents ne revelent pas toutes leurs contraintes), scalabilite (passage a l'echelle avec le nombre d'agents) et optimalite (qualite de la solution distribuee vs. solution centralisee).
-
-### Objectifs
-- Modeliser un probleme d'ordonnancement multi-agent (flotte de drones, robots collaboratifs) comme un CSP distribue avec variables et contraintes locales
-- Implementer le protocole ABT (Asynchronous Backtracking) avec gestion des nogoods et detection de cycles
-- Implementer le protocole AWC (Asynchronous Weak-Commitment) et comparer la vitesse de convergence avec ABT
-- Etudier la scalabilite en faisant varier le nombre d'agents, la densite des contraintes inter-agents et la taille des domaines
-- Evaluer le ratio qualite/cout de communication par rapport a une resolution centralisee (OR-Tools CP-SAT)
-
-### Notebooks CoursIA pertinents
-
-| Notebook | Chemin | Pertinence |
-|----------|--------|------------|
-| CSP-9 Distributed CSP | [Search/Part2-CSP/CSP-9-Distributed-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-9-Distributed-CSP.ipynb) | DisCSP, ABT, AWC |
-| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement, IntervalVar |
-| CSP-1 Fundamentals | [Search/Part2-CSP/CSP-1-Fundamentals.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-1-Fundamentals.ipynb) | Modelisation CSP |
-
-### References externes
-- Yokoo, M., et al. (1998). "The Distributed Constraint Satisfaction Problem: Formalization and Algorithms." *IEEE Transactions on Knowledge and Data Engineering*, 10(5), 673-685. [IEEE](https://ieeexplore.ieee.org/document/726791)
-- Petcu, A., & Faltings, B. (2005). "DPOP: A Scalable Method for Multiagent Constraint Optimization." *IJCAI*. [IJCAI](https://www.ijcai.org/Proceedings/05/Papers/0646.pdf)
-- Yokoo, M. (2001). "Distributed Constraint Satisfaction: Foundations of Cooperation in Multi-Agent Systems." *Springer*. [Springer](https://link.springer.com/book/10.1007/978-3-662-04589-7)
-- Modi, P., et al. (2005). "A General Formalization of Distributed Constraint Satisfaction Problem." *AAMAS*. [ACM](https://dl.acm.org/doi/10.1145/1082473.1082712)
-
-### Difficulte : 4/5
-
----
-
-#### D4 — Planification temporelle pour systemes cyber-physiques
-
-La planification temporelle pour systemes cyber-physiques (CPS) etend la planification classique en ajoutant des durees d'actions, des effets continus (consommation d'energie, temperature) et des contraintes de ressources limitees, formalisees en PDDL 2.1. Les systemes cyber-physiques tels que la gestion d'energie dans un batiment intelligent ou le controle du trafic routier requierent des plans ou les actions se chevauchent temporellement et ou les variables continues evoluent pendant l'execution. Le planificateur temporel (par exemple OPTIC, TEMPO or the temporal mode of Fast Downward) doit produire un schedule qui respecte les fenetres temporelles, les contraintes de capacite des ressources et les invariants continus. L'integration de contraintes de type CSP temporel (STP - Simple Temporal Problem) permet de verifier la consistance du schedule et de calculer les marges temporelles.
-
-### Objectifs
-- Modeliser un systeme cyber-physique (gestion d'energie, controle de trafic) en PDDL 2.1 avec actions durees, effets continus et contraintes de ressources
-- Utiliser un planificateur temporel pour generer des plans avec actions concurrentes et chevauchement temporel
-- Integrer un CSP temporel (STP) pour verifier la consistance du schedule et calculer les marges temporelles
-- Implementer la gestion des ressources renouvelables et non-renouvelables avec des profils de consommation variables
-- Evaluer sur des scenarios realistes (batiment NZEB, reseau de transport urbain) et comparer avec une approche purement CP-SAT
-
-### Notebooks CoursIA pertinents
-
-| Notebook | Chemin | Pertinence |
-|----------|--------|------------|
-| Planners-8 Temporal Planning | [SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-8-TemporalPlanning.ipynb) | PDDL 2.1, planification temporelle |
-| CSP-8 Temporal CSP | [Search/Part2-CSP/CSP-8-Temporal-CSP.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-8-Temporal-CSP.ipynb) | STP, consistance temporelle |
-| CSP-4 Scheduling | [Search/Part2-CSP/CSP-4-Scheduling.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-4-Scheduling.ipynb) | Ordonnancement, ressources |
-| Planners-3 State-Space Search | [SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-3-StateSpaceSearch.ipynb) | Heuristiques de planification |
-
-### References externes
-- Fox, M., & Long, D. (2003). "PDDL2.1: An Extension to PDDL for Expressing Temporal Planning Domains." *Journal of Artificial Intelligence Research*, 20, 61-124. [JAIR](https://jair.org/index.php/jair/article/view/10352)
-- Cesta, A., et al. (2002). "Planning and Scheduling: The State of the Art." *AI Magazine*, 23(2), 59-76. [AAAI](https://ojs.aaai.org/index.php/aimagazine/article/view/1674)
-- Dechter, R., Meiri, I., & Pearl, J. (1991). "Temporal Constraint Networks." *Artificial Intelligence*, 49(1-3), 61-95. [Elsevier](https://doi.org/10.1016/0004-3702(91)90006-6)
-- Coles, A., et al. (2010). "Forward-Chaining Partial-Order Planning." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13561)
-- Benton, J., et al. (2012). "Temporal Planning with Preferences and Time-Dependent Continuous Costs." *ICAPS*. [AAAI](https://ojs.aaai.org/index.php/ICAPS/article/view/13540)
-
-### Difficulte : 4/5
-
----
-
----
-
 ### Categorie E : Theorie des Jeux et Mechanism Design
 
 #### E1 — Comptabilite maximin et equilibres de Nash par programmation lineaire
@@ -985,6 +954,8 @@ Le calcul des equilibres de Nash en strategies mixtes pour des jeux bi-matrice r
 | GT-4 Normal Form | [GameTheory/GameTheory-4-NormalForm.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4-NormalForm.ipynb) | Jeux en forme normale, matrices de gains |
 | GT-5 Nash Equilibria | [GameTheory/GameTheory-5-NashEquilibria.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-5-NashEquilibria.ipynb) | Equilibres de Nash, Lemke-Howson |
 | GT-4c Zero-Sum/Minimax | [GameTheory/GameTheory-4c-ZeroSumMinimax.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4c-ZeroSumMinimax.ipynb) | Theoreme minimax, dualite LP |
+| GT-4 Nash Equilibrium | [GameTheory/GameTheory-4-NashEquilibrium.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4-NashEquilibrium.ipynb) | Equilibres de Nash, Lemke-Howson |
+| GT-4b Lean Nash Existence | [GameTheory/GameTheory-4b-Lean-NashExistence.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4b-Lean-NashExistence.ipynb) | Preuve d'existence en Lean 4 |
 
 ### References externes
 - Nash, J. (1951). "Non-Cooperative Games." *Annals of Mathematics*, 54(2), 286-295. [JSTOR](https://www.jstor.org/stable/1969529)
@@ -1042,8 +1013,9 @@ La theorie des jeux cooperatifs s'interesse a la formation de coalitions et a la
 
 | Notebook | Chemin | Pertinence |
 |----------|--------|------------|
-| GT-15 Cooperative/Shapley | [GameTheory/GameTheory-15-CooperativeShapley.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15-CooperativeShapley.ipynb) | Jeux cooperatifs, valeur de Shapley |
-| GT-15b Shapley Lean | [GameTheory/GameTheory-15b-ShapleyLean.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15b-ShapleyLean.ipynb) | Verification formelle Lean 4 |
+| GT-15 Cooperative Games | [GameTheory/GameTheory-15-CooperativeGames.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15-CooperativeGames.ipynb) | Jeux cooperatifs, valeur de Shapley |
+| GT-15b Lean Cooperative | [GameTheory/GameTheory-15b-Lean-CooperativeGames.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15b-Lean-CooperativeGames.ipynb) | Verification formelle Lean 4 |
+| GT-15c Cooperative Python | [GameTheory/GameTheory-15c-CooperativeGames-Python.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15c-CooperativeGames-Python.ipynb) | Implementation Python, SHAP values |
 | GT-4 Normal Form | [GameTheory/GameTheory-4-NormalForm.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-4-NormalForm.ipynb) | Prerequis : jeux en forme normale |
 
 ### References externes
@@ -1081,6 +1053,33 @@ La theorie de la conception de mecanismes (mechanism design) vise a concevoir de
 - Gibbard, A. (1973). "Manipulation of Voting Schemes: A General Result." *Econometrica*, 41(4), 587-601. [JSTOR](https://www.jstor.org/stable/1914083)
 - Satterthwaite, M. (1975). "Strategy-Proofness and Arrow's Conditions." *Journal of Economic Theory*, 10(2), 187-217. [ScienceDirect](https://www.sciencedirect.com/science/article/pii/0022053175900502)
 - Nisan, N. et al. (2007). *Algorithmic Game Theory*. Cambridge University Press. Ch. 9-10. [cambridge.org](https://www.cambridge.org/core/books/algorithmic-game-theory/)
+
+#### E5 — Counterfactual Regret Minimization (CFR) et poker IA
+
+CFR is an iterative algorithm that minimizes regret at each information set in extensive-form games with imperfect information. At each iteration, it computes counterfactual values for every action, updates cumulative regrets, and derives a strategy via regret matching. The algorithm converges to a Nash equilibrium in two-player zero-sum games. Applied to poker, CFR (and its variants CFR+) powered the breakthroughs of Libratus (2017, heads-up no-limit Texas Hold'em) and Pluribus (2019, six-player no-limit, Brown & Sandholm, Science/AAAI). The student implements vanilla CFR on Kuhn poker (3-card), scales to Leduc Hold'em, and evaluates against best-response opponents.
+
+### Objectifs
+- Implement vanilla CFR on Kuhn poker (3 cards, 2 players) with full game tree enumeration
+- Extend to Leduc Hold'em and profile the computational cost (nodes explored, memory, convergence rate)
+- Implement CFR+ (alternating updates, linear regret) and compare convergence speed with vanilla CFR
+- Build a best-response oracle to measure exploitability of the computed strategies over training iterations
+- Analyze the scalability challenges for larger games (abstraction techniques, external sampling MCCFR)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-13 Imperfect Info CFR | [GameTheory/GameTheory-13-ImperfectInfo-CFR.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-13-ImperfectInfo-CFR.ipynb) | Information imparfaite, CFR |
+| GT-7 Extensive Form | [GameTheory/GameTheory-7-ExtensiveForm.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-7-ExtensiveForm.ipynb) | Jeux sous forme extensive |
+| GT-5 Zero-Sum Minimax | [GameTheory/GameTheory-5-ZeroSumMinimax.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-5-ZeroSumMinimax.ipynb) | Zero-sum, minimax |
+
+### References externes
+- Zinkevich, M. et al. (2008). "Regret Minimization in Games with Incomplete Information." *NeurIPS 2007*. [NeurIPS](https://proceedings.neurips.cc/paper/2007/hash/08d98638c5f4bd8614a3ba2c223ab4a0-Abstract.html)
+- Brown, N. & Sandholm, T. (2019). "Superhuman AI for Multiplayer Poker." *Science*, 365(6456). [Science](https://doi.org/10.1126/science.aay2400)
+- Bowling, M. et al. (2015). "Heads-Up Limit Hold'em Poker Is Solved." *Science*, 347(6218). [Science](https://doi.org/10.1126/science.1259433)
+- Burch, N. et al. (2018). "Solving Imperfect-Information Games via Discounted Regret Minimization." *AAAI*. [AAAI](https://ojs.aaai.org/index.php/AAAI/article/view/11740)
+
+### Difficulte : 3/5
 
 ---
 
@@ -1752,6 +1751,35 @@ Implementer un pipeline complet ou un LLM traduit des problemes enoncees en lang
 
 ---
 
+#### J5 — Apprentissage par renforcement multi-agents (MARL) et emergence de cooperation
+
+Multi-Agent Reinforcement Learning (MARL) etend l'apprentissage par renforcement a des environnements ou plusieurs agents apprennent simultanement, chaque agent modifiant la dynamique de l'environnement pour les autres. Les defis centraux sont la non-stationnarite (la politique optimale d'un agent change quand les autres apprennent), l'explosion combinatoire de l'espace joint, et la tension entre exploration individuelle et coordination collective. Les algorithmes classiques (Independent Q-Learning, MADDPG, QMIX, MAPPO) adoptent differentes architectures (centralisee, decentralisee, factored) pour adresser ces defis. L'etudiant implemente des agents sur des environnements de cooperation (Predator-Prey, Level-Based Foraging) et de competition (OpenAI compete), et analyse l'emergence de strategies cooperatives ou d'equilibres competitifs.
+
+### Objectifs
+- Implementer Independent Q-Learning et MADDPG (Centralized Training, Decentralized Execution) sur un environnement multi-agent (PettingZoo)
+- Evaluer l'impact de la non-stationnarite en comparant l'apprentissage avec et sans parametres partages
+- Etudier l'emergence de strategies cooperatives dans Predator-Prey et Level-Based Foraging
+- Comparer les architectures factored (QMIX) et policy-gradient (MAPPO) en termes de convergence et de performance
+- Analyser les equilibres emergents et les relier aux concepts de la theorie des jeux (Nash, Pareto)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-17 Multi-Agent RL | [GameTheory/GameTheory-17-MultiAgent-RL.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-17-MultiAgent-RL.ipynb) | MARL, MADDPG, QMIX |
+| RL Multi-Agent | [RL/rl_6_multi_agent_rl.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/RL/rl_6_multi_agent_rl.ipynb) | Reinforcement learning multi-agents |
+| GT-11 Bayesian Games | [GameTheory/GameTheory-11-Bayesian-Games.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-11-Bayesian-Games.ipynb) | Information asymetrique |
+
+### References externes
+- Lowe, R. et al. (2017). "Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments." *NeurIPS 2017*. [NeurIPS](https://proceedings.neurips.cc/paper/2017/hash/68a9750337a418a86fe06c1991a1d64c-Abstract.html)
+- Rashid, T. et al. (2018). "QMIX: Monotonic Value Function Factorisation for Deep Multi-Agent RL." *ICML*. [PMLR](http://proceedings.mlr.press/v80/rashid18a.html)
+- Yu, C. et al. (2022). "The Surprising Effectiveness of PPO in Cooperative Multi-Agent Games." *NeurIPS 2022*. [NeurIPS](https://proceedings.neurips.cc/paper/2022/)
+- Busoniu, L. et al. (2008). "A Comprehensive Survey of Multiagent Reinforcement Learning." *IEEE Trans. SMC Part C*, 38(2). [IEEE](https://ieeexplore.ieee.org/document/4472064)
+
+### Difficulte : 4/5
+
+---
+
 ### Categorie K : Cryptographie Symbolique et Securite
 
 #### K1 — Cryptanalyse par contraintes de chiffrements classiques
@@ -1925,6 +1953,9 @@ Implementer un joueur artificiel pour un jeu combinatoire a information complete
 | Search-7 MCTS | [Search/Part1-Foundations/Search-7-MCTS.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part1-Foundations/Search-7-MCTS.ipynb) | Monte Carlo Tree Search |
 | App-12 Connect Four | [Search/Applications/Hybrid/App-12-ConnectFour.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-12-ConnectFour.ipynb) | Application Connect Four |
 | App-14 Connect Four RL | [Search/Applications/Hybrid/App-14-ConnectFour-RL.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Applications/Hybrid/App-14-ConnectFour-RL.ipynb) | Reinforcement Learning sur Connect Four |
+| GT-8 Combinatorial Games | [GameTheory/GameTheory-8-CombinatorialGames.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-8-CombinatorialGames.ipynb) | Theorie des jeux combinatoires |
+| GT-8b Lean Combinatorial | [GameTheory/GameTheory-8b-Lean-CombinatorialGames.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-8b-Lean-CombinatorialGames.ipynb) | Preuves formelles Lean |
+| GT-8c Combinatorial Python | [GameTheory/GameTheory-8c-CombinatorialGames-Python.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-8c-CombinatorialGames-Python.ipynb) | Implementation Python
 
 ### References externes
 - Knuth, D.E. & Moore, R.W. (1975). "An Analysis of Alpha-Beta Pruning." *Artificial Intelligence*. [Elsevier](https://www.sciencedirect.com/science/article/pii/S0004370275800113)
@@ -2085,6 +2116,33 @@ Choisir un benchmark de raisonnement logique (LogicGrid, bAbI, ProofWriter, ou F
 - Han, S. et al. (2022). "FOLIO: Natural Language Reasoning with First-Order Logic." *arXiv*. [arXiv](https://arxiv.org/abs/2209.00840)
 
 ### Difficulte : 2/5
+
+#### M6 — Theorie de l'Information Integree (IIT) et conscience artificielle par PyPhi
+
+Integrated Information Theory (IIT), proposee par Giulio Tononi, postule que la conscience correspond a la quantite d'information integree (Phi, Φ) generee par un systeme au-dela de ses parties. PyPhi est la bibliotheque Python officielle pour calculer Φ sur des reseaux de transition logiques, permettant d'explorer les relations entre architecture du reseau, informatisation et complexite phenomenologique. L'etudiant modelise differents reseaux neuronaux simplifies (gluckueaux, inhibiteurs, hierarchiques), calcule leurs valeurs Φ, et analyse comment la structure causale du systeme determine sa capacite integrative. Ce sujet aborde les questions fondamentales de la conscience artificielle et de l'explicabilite structurelle des systemes symboliques, en croisant theorie de l'information, logique et philosophie de l'esprit.
+
+### Objectifs
+- Installer PyPhi et comprendre le formalisme IIT (cause-effect repertoire, MIP, Φ)
+- Modeliser differents reseaux logiques simples (AND, OR, XOR, COPY) et calculer leurs valeurs Φ
+- Analyser l'impact de l'architecture du reseau (connectivite, recurrence, feedforward) sur la valeur de Φ
+- Comparer les systemes "conscients" (Φ eleve) et "automates" (Φ faible) en termes de structure causale
+- Discuter les limitations computationnelles (explosion combinatoire de PyPhi) et les perspectives pour l'IA symbolique
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Intro to PyPhi | [IIT/Intro_to_PyPhi.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/IIT/Intro_to_PyPhi.ipynb) | PyPhi, calcul de Φ |
+| Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Prototypage, reseaux logiques |
+| Tweety-4 Belief | [SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb) | Revision des croyances |
+
+### References
+- Tononi, G. (2004). "An Information Integration Theory of Consciousness." *BMC Neuroscience*, 5, 42. [BioMed Central](https://doi.org/10.1186/1471-2202-5-42)
+- Tononi, G. & Koch, C. (2015). "Consciousness: Here, There and Everywhere?" *Philosophical Transactions of the Royal Society B*, 370(1668). [Royal Society](https://doi.org/10.1098/rstb.2014.0167)
+- Mayner, W.G.P. et al. (2018). "PyPhi: A Toolbox for Integrated Information Theory." *PLoS Computational Biology*, 14(7). [PLOS](https://doi.org/10.1371/journal.pcbi.1006343)
+- Albantakis, L. et al. (2023). "Integrated Information Theory (IIT) 4.0." *arXiv*. [arXiv](https://arxiv.org/abs/2212.02621)
+
+### Difficulte : 3/5
 
 ---
 
@@ -2573,6 +2631,9 @@ La programmation probabiliste offre un paradigme unifie pour exprimer des modele
 | Notebook | Chemin | Pertinence |
 |----------|--------|------------|
 | Research/ | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Infer.NET, reseaux bayesiens |
+| Probas Infer-101 | [Probas/Infer-101.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Probas/Infer-101.ipynb) | Infer.NET tutoriel |
+| Probas PyMC HMM | [Probas/PyMC-HMM-Trading-Alpha.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Probas/PyMC-HMM-Trading-Alpha.ipynb) | PyMC, modeles hierarchiques |
+| Probas Pyro RSA | [Probas/Pyro_RSA_Hyperbole.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Probas/Pyro_RSA_Hyperbole.ipynb) | Pyro, inférence variotionnelle |
 | Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Solving deterministe vs probabiliste |
 | Tweety-4 Belief Revision | [SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb) | Revision et incertitude |
 | CSP-5 Optimization | [Search/Part2-CSP/CSP-5-Optimization.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Search/Part2-CSP/CSP-5-Optimization.ipynb) | Optimisation sous contraintes |
