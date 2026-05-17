@@ -195,6 +195,7 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [G2](#g2--raisonnement-owl-et-verification-de-coherence-dontologie) | Raisonnement OWL et verification de coherence d'ontologie | 3/5 |
 | [G3](#g3--graphrag--combine-knowledge-graphs-et-llm-pour-le-rag) | GraphRAG — combine Knowledge Graphs et LLM pour le RAG | 4/5 |
 | [G4](#g4--validation-de-donnees-par-shacl-shapes-constraint-language) | Validation de donnees par SHACL (Shapes Constraint Language) | 3/5 |
+| [G5](#g5--architecture-agentique-semantique-pour-le-traitement-de-documents-rdf) | Architecture agentique semantique pour le traitement de documents RDF | 3/5 |
 
 ### Categorie H : Representation des Connaissances et Raisonnement
 
@@ -320,6 +321,17 @@ Les notebooks suivants sont disponibles dans le depot CoursIA ([jsboige/CoursIA]
 | [S2](#s2--ontologies-financieres-et-web-semantique-pour-le-screening-dactifs) | Ontologies financieres et Web Semantique pour le screening d'actifs | 3/5 |
 | [S3](#s3--verification-formelle-de-protocoles-defi-par-smt) | Verification formelle de protocoles DeFi par SMT | 4/5 |
 | [S4](#s4--programmation-probabiliste-symbolique-pour-la-detection-de-regimes-de-marche) | Programmation probabiliste symbolique pour la detection de regimes de marche | 3/5 |
+
+### Categorie T : Sciences Sociales Computationnelles et Choix Collectif
+
+> Les sujets de la categorie T appliquent les outils de l'IA symbolique (verification formelle SAT/SMT, preuve Lean, argumentation structuree, revision des croyances AGM, logique epistemique) a des problemes de sciences sociales et de choix collectif. Chaque sujet repose sur un **noyau symbolique implementable** (solveur, raisonneur, module de preuve) et utilise la theorie des jeux, les modeles probabilistes ou les donnees reelles comme contexte d'application. Les sources de donnees sont publiques et verifiables (data.gouv.fr, assemblee-nationale.fr, election resources).
+
+| # | Sujet | Difficulte |
+|---|-------|------------|
+| [T1](#t1--pouvoir-de-coalition-par-verification-formelle-shapley-banzhaf-et-donnees-electorales-reelles) | Pouvoir de coalition par verification formelle (Shapley, Banzhaf et donnees electorales reelles) | 3/5 |
+| [T2](#t2--choix-social-et-procedures-de-vote-analyse-formelle-par-satsmt) | Choix social et procedures de vote : analyse formelle par SAT/SMT | 4/5 |
+| [T3](#t3--information-asymetrique-et-capture-modelisation-par-argumentation-et-logique-epistemique) | Information asymetrique et capture : modelisation par argumentation et logique epistemique | 4/5 |
+| [T4](#t4--decision-publique-sous-incertitude-revision-des-croyances-et-argumentation) | Decision publique sous incertitude : revision des croyances et argumentation | 3/5 |
 
 ---
 
@@ -1341,6 +1353,38 @@ SHACL (Shapes Constraint Language) est le standard W3C pour valider des graphes 
 - Krotzsch, M., et al. (2019). "A Comprehensive Formal Description of SHACL." *International Semantic Web Conference (ISWC)*. [Springer](https://doi.org/10.1007/978-3-030-30796-7_16)
 - pySHACL Documentation. [RDFLib](https://github.com/RDFLib/pySHACL)
 - Radulovic, F., et al. (2018). "Towards the Formalisation of the SHACL Shapes Constraints Language." *Knowledge-Based Systems*. [Elsevier](https://doi.org/10.1016/j.knosys.2018.04.013)
+
+### Difficulte : 3/5
+
+---
+
+#### G5 — Architecture agentique semantique pour le traitement de documents RDF
+
+Le Web Semantique fournit les briques fondamentales (RDF, OWL, SPARQL, SHACL) pour representer, raisonner et interroger des connaissances structurees, mais leur integration dans un pipeline de traitement complet reste un defi architectural. Ce sujet propose de concevoir une architecture multi-agents ou chaque agent est charge d'une operation specifique sur un flux de documents RDF : extraction et transformation (ETL), validation SHACL, enrichissement par raisonnement OWL-RL, partitionnement et requetage SPARQL, et synchronisation avec des sources externes (Linked Data). La coordination entre agents repose sur un graphe de connaissances partagé et des protocoles de communication semantiques. Les etudiants exploiteront les frameworks d'agents symboliques (planners PDDL, orchestration SK) pour gerer le flux de documents a travers les modules.
+
+### Objectifs
+- Concevoir une architecture multi-agents avec au minimum 4 agents specialises (extraction RDF, validation SHACL, raisonnement OWL, requetage SPARQL) coordonnes par un agent orchestrateur
+- Implementer chaque agent comme un module autonome traitant des documents RDF en entree et produisant des graphes RDF enrichis/valides en sortie
+- Definir un protocole de communication entre agents base sur des evenements semantiques (validation reussie, violation detectee, triplet inferre) et un graphe de connaissances partage
+- Implementer la planification du flux de traitement via PDDL (ordonnancement des agents en fonction du type de document) ou orchestration par Semantic Kernel
+- Evaluer l'architecture sur un corpus de documents RDF heterogenes (data.gouv.fr, DBpedia, Wikidata) et mesurer le debit, la couverture de validation et la qualite du raisonnement
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| SW-1 RDF Introduction | [SymbolicAI/SemanticWeb/SW-1-Introduction-RDF.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-1-Introduction-RDF.ipynb) | Bases RDF |
+| SW-7b Python OWL | [SymbolicAI/SemanticWeb/SW-7b-Python-OWL.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-7b-Python-OWL.ipynb) | Raisonnement OWL en Python |
+| SW-8 SHACL | [SymbolicAI/SemanticWeb/SW-8-Python-SHACL.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-8-Python-SHACL.ipynb) | Validation SHACL |
+| SW-4b Python SPARQL | [SymbolicAI/SemanticWeb/SW-4b-Python-SPARQL.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-4b-Python-SPARQL.ipynb) | Requetage SPARQL |
+| Planners-1 Intro | [SymbolicAI/Planners/Planners-1-Intro.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Planners/Planners-1-Intro.ipynb) | Planification, PDDL |
+| SW-11 Knowledge Graphs | [SymbolicAI/SemanticWeb/SW-11-Python-KnowledgeGraphs.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/SemanticWeb/SW-11-Python-KnowledgeGraphs.ipynb) | Graphes de connaissances |
+
+### References externes
+- Bizer, C. et al. (2009). "Linked Data — The Story So Far." *International Journal on Semantic Web and Information Systems*, 5(3), 1-22. [IGI Global](https://doi.org/10.4018/jswis.2009081901)
+- Horrocks, I. (2008). "Ontologies and the Semantic Web." *Communications of the ACM*, 51(12), 58-67. [ACM](https://dl.acm.org/doi/10.1145/1409360.1409377)
+- Wooldridge, M. (2009). *An Introduction to MultiAgent Systems*. 2nd ed., Wiley. [Wiley](https://www.wiley.com/en-us/An+Introduction+to+MultiAgent+Systems-p-9780470519462)
+- W3C. "RDF 1.1 Concepts and Abstract Syntax." [w3.org](https://www.w3.org/TR/rdf11-concepts/)
 
 ### Difficulte : 3/5
 
@@ -2854,6 +2898,138 @@ La detection de regimes de marche (bull, bear, range, crash) est un probleme cla
 - Minka, T. et al. (2018). *Infer.NET 2: Bayesian Inference in .NET*. Microsoft Research. [dotnet.github.io](https://dotnet.github.io/infer/)
 - Wellman, M.P. (1990). "Fundamental Concepts of Qualitative Probabilistic Networks." *Artificial Intelligence*, 44(3), 257-303. [ScienceDirect](https://doi.org/10.1016/0004-3702(90)90001-H)
 - Ghahramani, Z. (2015). "Probabilistic Machine Learning and Artificial Intelligence." *Nature*, 521, 452-459. [Nature](https://doi.org/10.1038/nature14541)
+
+### Difficulte : 3/5
+
+---
+
+### Categorie T : Sciences Sociales Computationnelles et Choix Collectif
+
+#### T1 — Pouvoir de coalition par verification formelle (Shapley, Banzhaf et donnees electorales reelles)
+
+La theorie des jeux cooperatifs fournit des indices de pouvoir (Shapley-Shubik, Banzhaf, Deegan-Packel) qui mesurent la capacite reelle d'un acteur a faire basculer une coalition gagnante, independamment de sa taille apparente. Applique aux resultats electoraux, cet outil revele des discrepancies frappantes entre poids electoral et pouvoir reel : un petit parti pivot peut avoir un indice de Shapley superieur a celui d'un grand parti bloque dans un bloc ideologique homogene. Ce sujet demande d'implementer le calcul formel de ces indices par encodage SAT/SMT (les coalitions gagnantes comme clauses, les indices comme fonctions sur les modeles), de verifier les proprietes axiomatiques (symetrie, joueur nul, efficacite) par Z3 ou Lean, et d'appliquer l'outil a des cas concrets. Les donnees publiques sont disponibles pour les legislatives francaises (2022, 2024 — NUPES/NFP, coalition presidentielle, RN), les municipales (coalitions post-2nd tour), et les elections europeennes (repartition des sieges par methode D'Hondt).
+
+### Objectifs
+- Implementer le calcul des indices de Shapley-Shubik, Banzhaf et Deegan-Packel par encodage SAT/SMT (Z3) et verifier la correction par test sur des instances de reference de la litterature
+- Prouver formellement en Z3 ou Lean que chaque indice satisfait ses axiomes (symetrie, joueur nul, efficacite, additivite) et identifier les proprietes qui les distinguent
+- Appliquer aux resultats des legislatives 2022 et 2024 (donnees publiques : 577 circonscriptions, resultats par candidat sur data.gouv.fr et assemblee-nationale.fr) en modelisant les coalitions possibles (NUPES/NFP, ensemble, RN, LR) et leurs indices de pouvoir respectifs
+- Comparer le pouvoir de pivot observe dans les coalitions reelles avec le pouvoir theorique predit par les indices, et analyser les cas de divergence (discipline de parti, votes a l'assemblee)
+- Etendre l'analyse aux systemes proportionnels (Europeennes, regionales) ou la repartition D'Hondt cree des seuils strategiques, et evaluer l'impact d'un changement de mode de scrutin sur les indices de pouvoir
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| GT-15 Cooperative Games | [GameTheory/GameTheory-15-CooperativeGames.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15-CooperativeGames.ipynb) | Jeux cooperatifs, valeur de Shapley |
+| GT-15b Lean Cooperative | [GameTheory/GameTheory-15b-Lean-CooperativeGames.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15b-Lean-CooperativeGames.ipynb) | Verification formelle Lean 4 |
+| GT-15c Cooperative Python | [GameTheory/GameTheory-15c-CooperativeGames-Python.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-15c-CooperativeGames-Python.ipynb) | Implementation Python, SHAP values |
+| SocialChoice/03 Voting Methods | [GameTheory/SocialChoice/03-Voting-Methods.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/03-Voting-Methods.ipynb) | Methodes de vote, Arrow et au-dela |
+| Linq2Z3 | [SymbolicAI/Linq2Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Linq2Z3.ipynb) | Encodage SMT des coalitions |
+
+### References externes
+- Shapley, L.S. (1953). "A Value for n-Person Games." *Contributions to the Theory of Games*, II, 307-317. [Princeton](https://doi.org/10.1515/9781400881970-018)
+- Banzhaf, J.F. (1965). "Weighted Voting Doesn't Work: A Mathematical Analysis." *Rutgers Law Review*, 19, 317-343. [HeinOnline](https://heinonline.org/HOL/LandingPage?handle=hein.journals/ RutgersLR19&div=20)
+- Felsenthal, D.S. & Machover, M. (1998). *The Measurement of Voting Power: Theory and Practice, Problems and Paradoxes*. Edward Elgar. [Edward Elgar](https://www.e-elgar.com/shop/gb/measurement-of-voting-power-9781858988054.html)
+- Laruelle, A. & Valenciano, F. (2008). *Voting and Collective Decision-Making*. Cambridge University Press. [Cambridge](https://doi.org/10.1017/CBO9780511493241)
+- Donnees elections legislatives francaises. [data.gouv.fr](https://www.data.gouv.fr/fr/datasets/elections-legislatives-des-12-et-19-juin-2022-resultats-definitifs-par-bureau-de-vote/)
+
+### Difficulte : 3/5
+
+---
+
+#### T2 — Choix social et procedures de vote : analyse formelle par SAT/SMT
+
+Le theoreme d'impossibilite d'Arrow (1951) demontre qu'aucune procedure de vote agregative ne peut satisfaire simultanement cinq axiomes rationnels (universalite, unanimité, non-dictature, independance aux alternatives irrelevantes, transitivite). Ce resultat fondamental se preuve par encodage SAT : on enumere les profils de preferences possibles et on verifie par solveur qu'aucune fonction d'agregation ne satisfait les cinq axiomes. Ce sujet propose d'implementer cet encodage formel, de l'etendre a des axiomes alternatifs (monotonie, stratategy-proofness, participation), et de comparer formellement les proprietes des procedures de vote reelles (scrutin majoritaire a deux tours, proportionnelle D'Hondt, vote par approbation, jugement majoritaire, vote unique transférable). L'application concrete porte sur la comparaison des mecanismes constitutionnels francais (election presidentielle, legislatives, 49.3) avec des alternatives proposees pour une eventuelle VIe Republique.
+
+### Objectifs
+- Implementer l'encodage SAT du theoreme d'Arrow (3 candidats, N electeurs) par PySAT ou Z3 et reproduire le resultat d'impossibilite par resolution automatique
+- Encoder des axiomes supplementaires (monotonie, strategie-proofness, critere de participation, critere de Condorcet) et identifier formellement quels sous-ensembles d'axiomes sont compatibles
+- Comparer formellement les proprietes satisfaites par chaque procedure de vote reelle (majoritaire 2 tours, proportionnelle, approbation, jugement majoritaire, STV) en verifiant chaque axiome par SMT
+- Modeliser les mecanismes constitutionnels francais (election presidentielle 2 tours, legislatives, article 49.3, dissolution) comme des procedures de choix social et analyser formellement leurs proprietes
+- Proposer des alternatives de procedure de vote pour une reforme constitutionnelle et argumenter formellement (quels axiomes preserves, lesquels relaches) en s'appuyant sur les resultats SAT/SMT
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Arrow SAT | [GameTheory/SocialChoice/01-Arrow-Impossibility-Theorem.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/01-Arrow-Impossibility-Theorem.ipynb) | Theoreme d'Arrow par SAT |
+| Arrow SMT (Z3) | [GameTheory/SocialChoice/04-Computational-Aggregation-SAT-Z3.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/04-Computational-Aggregation-SAT-Z3.ipynb) | Encodage SMT, aggregation |
+| Arrow Lean | [GameTheory/SocialChoice/02-Lean-SocialChoice-Formal.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/02-Lean-SocialChoice-Formal.ipynb) | Preuve formelle Lean 4 |
+| SocialChoice/03 Voting Methods | [GameTheory/SocialChoice/03-Voting-Methods.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/SocialChoice/03-Voting-Methods.ipynb) | Comparaison des methodes |
+| GT-16 Mechanism Design | [GameTheory/GameTheory-16-MechanismDesign.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-16-MechanismDesign.ipynb) | Mecanismes incitatifs, VCG |
+
+### References externes
+- Arrow, K.J. (1951). *Social Choice and Individual Values*. 2nd ed., Wiley. [Wiley](https://www.wiley.com/en-us/Social+Choice+and+Individual+Values-p-9780300013641)
+- Geanakoplos, J. (2005). "Three Brief Proofs of Arrow's Impossibility Theorem." *Economic Theory*, 26(1), 211-215. [Springer](https://doi.org/10.1007/s00199-004-0556-7)
+- Brams, S.J. & Fishburn, P.C. (2007). *Approval Voting*. 2nd ed., Springer. [Springer](https://doi.org/10.1007/978-0-387-49896-8)
+- Balinski, M. & Laraki, R. (2011). *Majority Judgment: Measuring, Ranking, and Electing*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262545768/majority-judgment/)
+- Pacuit, E. (2019). "Voting Methods." *Stanford Encyclopedia of Philosophy*. [SEP](https://plato.stanford.edu/entries/voting-methods/)
+
+### Difficulte : 4/5
+
+---
+
+#### T3 — Information asymetrique et capture : modelisation par argumentation et logique epistemique
+
+La theorie de la capture reglementaire (Stigler, 1971 ; Laffont & Tirole, 1993) modelise comment un agent regulate peut etre influence par l'agent qu'il est cense controler, lorsque l'information est asymetrique et les incentives mal alignees. Ce cadre theorique s'applique a la concentration mediatique, aux lobbys industriels, et aux relations finance-regulateur. Ce sujet propose de formaliser ces dynamiques par deux outils symboliques complementaires : la logique epistemique multi-agents (Kripke, connaissance partagee, annonces publiques) pour modeliser l'information asymetrique et ses effets sur les croyances, et l'argumentation structuree de Dung (frameworks d'attaque, extensions, semantics) pour modeliser les debats publics et la manipulation de l'information. Les etudiants implementent un raisonneur epistemique et un systeme d'argumentation, puis les combinent pour simuler des scenarios de capture et analyser formellement les conditions sous lesquelles l'information est degradee pour le principal (citoyen).
+
+### Objectifs
+- Implementer un modele de Kripke multi-agents capturant l'information asymetrique entre regulate, industrie et citoyens (Ki, croyances croisees, knowledge gaps)
+- Implementer un framework d'argumentation de Dung avec semantiques (grounded, preferred, stable) et l'appliquer a des debats publics sur des questions reglementaires
+- Modeliser la capture reglementaire comme un jeu a information asymetrique ou l'agent industriel controle une partie du flux d'information (public announcements partielles, desinformation) et analyser formellement les conditions d'equilibre
+- Combiner logique epistemique et argumentation : un argument est accepte ou rejete en fonction de l'etat epistemique de l'agent, et les annonces publiques modifient cet etat
+- Evaluer sur des scenarios tires de cas documentes (concentration mediatique francaise, lobbying climatique, regulation financiere post-2008) avec donnees publiques (ACM, ARCOM, registres de transparence europeens)
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Frameworks de Dung, semantiques |
+| Tweety-6 Structured Argumentation | [SymbolicAI/Tweety/Tweety-6-Structured-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-6-Structured-Argumentation.ipynb) | Argumentation structuree, ASPIC+ |
+| Tweety-3 Advanced Logics | [SymbolicAI/Tweety/Tweety-3-Advanced-Logics.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-3-Advanced-Logics.ipynb) | Logiques modales, epistemique |
+| GT-11 Bayesian Games | [GameTheory/GameTheory-11-Bayesian-Games.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-11-Bayesian-Games.ipynb) | Information asymetrique |
+| GT-16 Mechanism Design | [GameTheory/GameTheory-16-MechanismDesign.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/GameTheory/GameTheory-16-MechanismDesign.ipynb) | Incentives, revelation |
+| Tweety-8 Agent Dialogues | [SymbolicAI/Tweety/Tweety-8-Agent-Dialogues.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-8-Agent-Dialogues.ipynb) | Dialogues strategiques |
+
+### References externes
+- Stigler, G.J. (1971). "The Theory of Economic Regulation." *Bell Journal of Economics*, 2(1), 3-21. [JSTOR](https://www.jstor.org/stable/3003164)
+- Laffont, J.-J. & Tirole, J. (1993). *A Theory of Incentives in Procurement and Regulation*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262121743/)
+- Dung, P.M. (1995). "On the Acceptability of Arguments and its Fundamental Role in Nonmonotonic Reasoning, Logic Programming, and n-Person Games." *Artificial Intelligence*, 77(2), 321-357. [Elsevier](https://doi.org/10.1016/0004-3702(94)00041-X)
+- Fagin, R. et al. (1995). *Reasoning About Knowledge*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262562003/reasoning-about-knowledge/)
+- Besley, T. & Coate, S. (2001). "Lobbying and Welfare in a Representative Democracy." *Review of Economic Studies*, 68(1), 67-82. [Oxford](https://doi.org/10.1111/1467-937X.00162)
+
+### Difficulte : 4/5
+
+---
+
+#### T4 — Decision publique sous incertitude : revision des croyances et argumentation
+
+Les decisions de politique publique (politique climatique, gestion de pandemie, reforme fiscale, strategie energetique) sont prises sous forte incertitude : les modeles scientifiques evoluent, les donnees sont incompletes, et les experts divergent. La theorie de la decision classique (utilite esperee, arbres de decision) suppose des probabilites connues, mais en pratique les decideurs doivent reviser leurs croyances au fur et a mesure que de nouvelles informations arrivent — parfois contradictoires. Ce sujet propose de construire un systeme symbolique de decision publique combinant trois couches : (1) un module de revision des croyances AGM (Alchourron-Gardenfors-Makinson) pour mettre a jour formellement une base de croyances face a des informations nouvelles contradictoires, (2) un module d'argumentation ponderee pour structurer le debat entre experts et identifier les positions defendables, et (3) un module de decision symbolique comparant differents criteres (utilite esperee, maximin, minimax regret, leximin) formalises en logique de preference qualitative. L'objectif est de produire un outil formel qui rend explicite les hypotheses, les croyances et les criteres de decision sous-jacents a une politique publique.
+
+### Objectifs
+- Implementer un moteur de revision des croyances AGM (expansion, contraction, revision) avec au moins trois strategies (lexicographique, Dalal, distance-based) et verifier formellement le respect des postulats AGM
+- Implementer un systeme d'argumentation pondere (Weighted Argumentation Frameworks) ou chaque argument a un poids base sur la confiance dans la source, et evaluer les extensions defendables
+- Formaliser en logique qualitative de préference les criteres de decision classiques (maximin, minimax regret, leximin) et les implementer comme mecanismes de choix entre alternatives poli%C3%A7tiques
+- Appliquer le systeme complet a un cas d'etude documente (politique climatique IPPC, gestion Covid, transition energetique) en utilisant des donnees publiques et des rapports d'experts
+- Comparer les recommandations du systeme sous differents criteres de decision et analyser la sensibilite aux choix de revision (AGM) et de ponderation des arguments
+
+### Notebooks CoursIA pertinents
+
+| Notebook | Chemin | Pertinence |
+|----------|--------|------------|
+| Tweety-4 Belief Revision | [SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-4-Belief-Revision.ipynb) | AGM, revision, contraction |
+| Tweety-5 Abstract Argumentation | [SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-5-Abstract-Argumentation.ipynb) | Argumentation de Dung |
+| Tweety-7b Ranking Probabilistic | [SymbolicAI/Tweety/Tweety-7b-Ranking-Probabilistic.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-7b-Ranking-Probabilistic.ipynb) | Ranking, probabilites |
+| Tweety-9 Preferences | [SymbolicAI/Tweety/Tweety-9-Preferences.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/SymbolicAI/Tweety/Tweety-9-Preferences.ipynb) | Preferences, ordinaux |
+| Probas Infer-101 | [Probas/Infer-101.ipynb](https://github.com/jsboige/CoursIA/blob/main/MyIA.AI.Notebooks/Probas/Infer-101.ipynb) | Infer.NET, programmation probabiliste |
+| Research/ Decision Networks | [Research/](https://github.com/jsboige/CoursIA/tree/main/MyIA.AI.Notebooks/Research) | Reseaux de decision, POMDP |
+
+### References externes
+- Alchourron, C.E., Gardenfors, P. & Makinson, D. (1985). "On the Logic of Theory Change." *Journal of Symbolic Logic*, 50(2), 510-530. [JSTOR](https://www.jstor.org/stable/2274239)
+- Dung, P.M. (1995). "On the Acceptability of Arguments." *Artificial Intelligence*, 77(2), 321-357. [Elsevier](https://doi.org/10.1016/0004-3702(94)00041-X)
+- Gardenfors, P. (1988). *Knowledge in Flux: Modeling the Dynamics of Epistemic States*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262571798/knowledge-in-flux/)
+- Savage, L.J. (1954). *The Foundations of Statistics*. Wiley. [Internet Archive](https://archive.org/details/foundationsofsta0000sava)
+- Halpern, J.Y. (2003). *Reasoning About Uncertainty*. MIT Press. [MIT Press](https://mitpress.mit.edu/9780262582998/reasoning-about-uncertainty/)
 
 ### Difficulte : 3/5
 
