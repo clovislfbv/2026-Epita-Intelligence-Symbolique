@@ -5,6 +5,8 @@
 Ce document presente les sujets de projet pour le cours d'Intelligence Symbolique (SCIA). Chaque sujet inclut une description detaillee, des references academiques et pratiques, des liens vers les notebooks CoursIA pertinents, et les technologies a utiliser.
 
 > **Consignes de choix** : Chaque groupe doit forker ce depot et creer un dossier pour son projet contenant le code source, un notebook explicatif OU une UI/demo fonctionnelle (au choix), et les slides de soutenance. Les livraisons se font via des pull requests regulieres.
+>
+> **Inscription** : Inscrivez-vous et choisissez votre sujet dans la [feuille d'inscription des projets de groupe](https://docs.google.com/spreadsheets/d/1xmxEJcOyTegIhjW8LEqYewkCJ7m8_vK4/edit?usp=sharing). Chaque etudiant renseigne sa ligne (onglet `eleves`, colonne *Sujet Projet IA Symbolique*, menu deroulant) ; le catalogue complet des sujets est sur l'onglet `Sujets`.
 
 ### Du cours de Programmation par Contraintes a l'Intelligence Symbolique
 
