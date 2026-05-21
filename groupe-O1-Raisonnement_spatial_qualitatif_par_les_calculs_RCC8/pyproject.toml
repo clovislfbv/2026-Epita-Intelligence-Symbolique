@@ -1,0 +1,17 @@
+[project]
+name = "RCC8_spacial_calculus"
+version = "0.1.0"
+description = "VM allocation optimization library"
+readme = "README.md"
+authors = [
+    { name = "coraline.carpin", email = "coraline.carpin@epita.fr" },
+    { name = "mustapha.oumeziane", email = "mustapha.oumeziane@epita.fr" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.10.9",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
