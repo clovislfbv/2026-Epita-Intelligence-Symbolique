@@ -154,14 +154,28 @@ async def _build_gen() -> AsyncGenerator[str, None]:
             yield _sse("error", 0, "Aucun document trouvé.")
             return
 
-        docs_map: dict = {}
+        docs_map: dict = {f.name: f.read_text(encoding="utf-8", errors="ignore") for f in files}
+        n = len(files)
+        workers = int(os.getenv("EXTRACT_WORKERS", "8"))
+        sem = asyncio.Semaphore(workers)
+
+        async def _extract_one(name: str, text: str) -> tuple:
+            async with sem:
+                triples = await asyncio.to_thread(extract_triples, text, llm)
+                return name, triples
+
+        yield _sse("extraction", 5, f"{n} fichiers — extraction parallèle ({workers} workers)…")
+        await asyncio.sleep(0)
+
         all_triples = []
-        for i, f in enumerate(files):
-            text = f.read_text(encoding="utf-8", errors="ignore")
-            docs_map[f.name] = text
-            yield _sse("extraction", int(i / len(files) * 40), f"Extraction : {f.name}")
+        done = 0
+        for coro in asyncio.as_completed([_extract_one(k, v) for k, v in docs_map.items()]):
+            name, triples = await coro
+            all_triples.extend(triples)
+            done += 1
+            progress = 5 + int(done / n * 35)
+            yield _sse("extraction", progress, f"({done}/{n}) {name}")
             await asyncio.sleep(0)
-            all_triples.extend(extract_triples(text, llm))
 
         yield _sse("extraction", 40, f"{len(all_triples)} triplets extraits")
         yield _sse("graph_build", 50, "Construction du graphe RDF…")
