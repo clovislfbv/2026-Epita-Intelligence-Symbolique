@@ -10,11 +10,15 @@ class LLMClient(ABC):
     """Abstract base class for LLM provider clients."""
 
     @abstractmethod
-    def complete(self, prompt: str) -> str:
+    def complete(self, prompt: str, history: list | None = None) -> str:
         """Send a prompt and return the model's text response.
 
         Args:
             prompt: The user prompt to send to the model.
+            history: Optional list of prior turns as dicts with ``"role"``
+                and ``"content"`` keys, ordered oldest-first.  When provided,
+                these messages are prepended before the current prompt so the
+                model has conversational context.
 
         Returns:
             The model's text response as a string.
@@ -34,19 +38,18 @@ class OpenAIClient(LLMClient):
         self._client = OpenAI(api_key=api_key)
         self.model = model
 
-    def complete(self, prompt: str) -> str:
+    def complete(self, prompt: str, history: list | None = None) -> str:
         """Send a prompt to OpenAI and return the response text.
 
         Args:
             prompt: The user prompt to send.
+            history: Optional prior conversation turns (role/content dicts).
 
         Returns:
             The assistant's reply as a string.
         """
-        resp = self._client.chat.completions.create(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}]
-        )
+        messages = list(history or []) + [{"role": "user", "content": prompt}]
+        resp = self._client.chat.completions.create(model=self.model, messages=messages)
         return resp.choices[0].message.content
 
 
@@ -64,20 +67,18 @@ class AnthropicClient(LLMClient):
         self._client = anthropic.Anthropic(api_key=api_key)
         self.model = model
 
-    def complete(self, prompt: str) -> str:
+    def complete(self, prompt: str, history: list | None = None) -> str:
         """Send a prompt to Anthropic and return the response text.
 
         Args:
             prompt: The user prompt to send.
+            history: Optional prior conversation turns (role/content dicts).
 
         Returns:
             The assistant's reply as a string.
         """
-        msg = self._client.messages.create(
-            model=self.model,
-            max_tokens=1024,
-            messages=[{"role": "user", "content": prompt}]
-        )
+        messages = list(history or []) + [{"role": "user", "content": prompt}]
+        msg = self._client.messages.create(model=self.model, max_tokens=1024, messages=messages)
         return msg.content[0].text
 
 
@@ -94,22 +95,27 @@ class OllamaClient(LLMClient):
         self.model = model
         self.base_url = base_url
 
-    def complete(self, prompt: str) -> str:
+    def complete(self, prompt: str, history: list | None = None) -> str:
         """Send a prompt to Ollama and return the response text.
+
+        Uses the ``/api/chat`` endpoint so that conversation history is passed
+        as a proper messages array (role/content dicts).
 
         Args:
             prompt: The user prompt to send.
+            history: Optional prior conversation turns (role/content dicts).
 
         Returns:
             The model's reply as a string.
         """
         import requests
+        messages = list(history or []) + [{"role": "user", "content": prompt}]
         resp = requests.post(
-            f"{self.base_url}/api/generate",
-            json={"model": self.model, "prompt": prompt, "stream": False},
-            timeout=120
+            f"{self.base_url}/api/chat",
+            json={"model": self.model, "messages": messages, "stream": False},
+            timeout=120,
         )
-        return resp.json()["response"]
+        return resp.json()["message"]["content"]
 
 
 def get_llm_client() -> LLMClient:

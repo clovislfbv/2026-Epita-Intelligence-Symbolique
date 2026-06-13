@@ -34,16 +34,32 @@ class DocReferenceSchema(BaseModel):
     sections: Optional[List[str]] = None
 
 
+class HistoryMessage(BaseModel):
+    """A single turn in the conversation history.
+
+    Attributes:
+        role: Either ``"user"`` or ``"assistant"``.
+        content: The text content of this turn.
+    """
+
+    role: str
+    content: str
+
+
 class QueryRequest(BaseModel):
     """Request body for the /query endpoint.
 
     Attributes:
         question: The natural-language question to answer.
         max_hops: Maximum BFS depth for subgraph extraction. Defaults to 2.
+        history: Prior conversation turns sent in order, oldest first.
+            Each entry has ``role`` (``"user"`` or ``"assistant"``) and
+            ``content``.  Defaults to an empty list (no prior context).
     """
 
     question: str
     max_hops: int = 2
+    history: List[HistoryMessage] = []
 
 
 class QueryResponse(BaseModel):

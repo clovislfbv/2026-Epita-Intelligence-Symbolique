@@ -6,7 +6,7 @@ a natural-language question and returns a :class:`PipelineResult`.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 
 from .llm import LLMClient
 from .graph import KnowledgeGraph
@@ -65,6 +65,7 @@ def run(
     llm: LLMClient,
     docs_map: Optional[Dict[str, str]] = None,
     max_hops: int = 2,
+    history: Optional[List[Dict[str, str]]] = None,
 ) -> PipelineResult:
     """Execute the full GraphRAG pipeline for a single question.
 
@@ -75,7 +76,8 @@ def run(
        degree as seeds.
     3. **Subgraph extraction** — BFS up to *max_hops* hops from the seeds.
     4. **Context serialisation** — convert the subgraph to a prompt snippet.
-    5. **LLM completion** — call the LLM with the context and question.
+    5. **LLM completion** — call the LLM with the context, question, and any
+       prior conversation history.
     6. **Doc matching** — mark any document whose text contains a subgraph node.
     7. **Result assembly** — package everything into a PipelineResult.
 
@@ -88,6 +90,9 @@ def run(
             populate ``PipelineResult.docs_used``.  Defaults to ``None``.
         max_hops: Maximum BFS depth when extracting the subgraph.
             Defaults to 2.
+        history: Optional prior conversation turns as a list of dicts with
+            ``"role"`` and ``"content"`` keys, ordered oldest-first.  Passed
+            directly to the LLM so it can reference earlier exchanges.
 
     Returns:
         A PipelineResult containing the answer, BFS trace, matched documents,
@@ -103,7 +108,7 @@ def run(
 
     subgraph = extract_subgraph(kg, seeds, max_hops=max_hops)
     context = subgraph_to_context(subgraph)
-    answer = llm.complete(_PROMPT.format(context=context, question=question))
+    answer = llm.complete(_PROMPT.format(context=context, question=question), history=history)
 
     docs_used: List[DocReference] = []
     if docs_map:

@@ -4,6 +4,8 @@ let lastSubgraphNodes = new Set();
 let lastSubgraphEdges = new Set();
 let simulation = null;
 let graphData = null;
+/** @type {Array<{role: string, content: string}>} */
+let chatHistory = [];
 
 /**
  * Updates the app state and refreshes all dependent UI elements.
@@ -82,6 +84,7 @@ document.querySelectorAll('.ds-btn').forEach(btn => {
     document.getElementById('docs-list').innerHTML = '';
     datasets[ds].files.forEach(addDocItem);
     if (datasets[ds].files.length > 0) document.getElementById('build-btn').disabled = false;
+    chatHistory = [];
     setAppState('upload');
   });
 });
@@ -90,6 +93,7 @@ document.getElementById('reset-btn').addEventListener('click', async () => {
   await fetch(`${API}/reset`, { method: 'POST' });
   document.getElementById('docs-list').innerHTML = '';
   document.getElementById('build-btn').disabled = true;
+  chatHistory = [];
   setAppState('upload');
 });
 
@@ -132,7 +136,8 @@ document.getElementById('send-btn').addEventListener('click', sendMessage);
 document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
 
 /**
- * Reads the chat input, sends a query to the backend, and renders the response.
+ * Reads the chat input, sends a query (with conversation history) to the
+ * backend, renders the response, and appends both turns to chatHistory.
  */
 async function sendMessage() {
   const input = document.getElementById('chat-input');
@@ -145,11 +150,13 @@ async function sendMessage() {
     const r = await fetch(`${API}/query`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: q })
+      body: JSON.stringify({ question: q, history: chatHistory })
     });
     const data = await r.json();
     updateMessage(typingId, data);
     highlightSubgraph(data.subgraph_nodes, data.subgraph_edges);
+    chatHistory.push({ role: 'user', content: q });
+    chatHistory.push({ role: 'assistant', content: data.answer });
   } catch (err) {
     updateMessage(typingId, null, 'Erreur lors de la requête.');
   }
