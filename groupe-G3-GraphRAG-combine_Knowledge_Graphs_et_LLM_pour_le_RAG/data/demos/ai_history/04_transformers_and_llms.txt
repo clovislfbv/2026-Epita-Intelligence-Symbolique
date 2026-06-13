@@ -1,0 +1,11 @@
+The Transformer architecture was introduced in the paper "Attention Is All You Need" published in 2017 by Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, and Polosukhin, all researchers at Google Brain and Google Research. The Transformer replaced recurrent networks with self-attention mechanisms, enabling parallel training and better long-range dependency modeling.
+
+BERT (Bidirectional Encoder Representations from Transformers) was developed by Jacob Devlin and colleagues at Google in 2018. BERT introduced pre-training on large text corpora followed by fine-tuning for downstream tasks. BERT achieved state-of-the-art results on eleven NLP benchmarks and popularized the pre-train/fine-tune paradigm.
+
+GPT (Generative Pre-trained Transformer) was developed by OpenAI. GPT-1 was released in 2018, GPT-2 in 2019, and GPT-3 in 2020. GPT-3 has 175 billion parameters and demonstrated remarkable few-shot learning capabilities. ChatGPT, based on GPT-3.5 and GPT-4, was released in November 2022 and reached 100 million users in two months.
+
+The attention mechanism was first proposed by Bahdanau, Cho, and Bengio in 2014 for neural machine translation. Attention allows models to focus on relevant parts of the input when generating each output token. Self-attention, used in Transformers, computes attention between all positions in a sequence.
+
+Hugging Face was founded in 2016 and became the central hub for pre-trained language models. The Hugging Face Transformers library made BERT, GPT, and hundreds of other models accessible to researchers and developers worldwide. Hugging Face hosts the largest open-source model repository.
+
+LLaMA, developed by Meta AI, is an open-weight large language model released in 2023. LLaMA democratized access to powerful language models and spawned many fine-tuned variants like Alpaca and Vicuna. Meta AI is led by Yann LeCun and has released numerous open-source AI models.

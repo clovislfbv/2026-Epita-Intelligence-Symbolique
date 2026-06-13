@@ -1,0 +1,11 @@
+Frank Rosenblatt invented the Perceptron in 1957 at Cornell Aeronautical Laboratory. The Perceptron was the first artificial neural network capable of learning from examples. It was implemented on an IBM 704 computer and could classify simple patterns. The US Navy funded the Perceptron research.
+
+The backpropagation algorithm, formalized by David Rumelhart, Geoffrey Hinton, and Ronald Williams in 1986, made training multi-layer neural networks practical. Backpropagation computes gradients efficiently using the chain rule of calculus. This work was published in the journal Nature and reignited interest in neural networks after the first AI winter.
+
+Geoffrey Hinton worked at the University of Toronto and later Google. Hinton, along with Yann LeCun and Yoshua Bengio, is considered one of the "Godfathers of Deep Learning". The three shared the 2018 Turing Award for their contributions to deep learning.
+
+Yann LeCun developed Convolutional Neural Networks (CNNs) while at Bell Labs in the late 1980s. CNNs are inspired by the visual cortex of mammals and excel at image recognition tasks. LeCun's LeNet architecture was used by banks to read handwritten digits on checks. LeCun later became Chief AI Scientist at Meta.
+
+Yoshua Bengio leads the Montreal Institute for Learning Algorithms (MILA) at the University of Montreal. Bengio made fundamental contributions to recurrent neural networks and attention mechanisms. MILA is one of the world's leading AI research institutes.
+
+The ImageNet dataset, created by Fei-Fei Li at Stanford University, contains over 14 million labeled images across 21,000 categories. ImageNet became the benchmark for computer vision research. The ImageNet Large Scale Visual Recognition Challenge (ILSVRC) drove rapid progress in deep learning, particularly after AlexNet won the 2012 competition with a CNN approach.

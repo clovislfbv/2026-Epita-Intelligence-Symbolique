@@ -1,0 +1,11 @@
+AI safety is the research field concerned with ensuring artificial intelligence systems behave as intended and remain beneficial as they become more powerful. Stuart Russell, a professor at UC Berkeley, is one of the leading voices in AI safety research. Russell co-authored "Artificial Intelligence: A Modern Approach" with Peter Norvig, the most widely used AI textbook in universities worldwide.
+
+The Machine Intelligence Research Institute (MIRI) was founded by Eliezer Yudkowsky in 2000 to study AI alignment. MIRI focuses on ensuring that superintelligent AI systems pursue goals aligned with human values. Yudkowsky has written extensively on the risks of misaligned superintelligence.
+
+The Future of Life Institute, co-founded by Max Tegmark, published an open letter in 2015 signed by thousands of researchers calling for the responsible development of AI. In 2023, another open letter called for a pause on training AI systems more powerful than GPT-4. Signatories included Yoshua Bengio, Stuart Russell, and Elon Musk.
+
+Geoffrey Hinton resigned from Google in 2023, citing concerns about the risks of AI. Hinton stated that he regretted his life's work on deep learning given the potential dangers of advanced AI systems. He joined the public discourse on AI risks alongside other prominent researchers.
+
+Constitutional AI is a technique developed by Anthropic to train AI models to be helpful, harmless, and honest. The method trains models using a set of principles (a "constitution") rather than relying solely on human feedback. Dario Amodei and the Anthropic team published the Constitutional AI paper in 2022.
+
+The EU AI Act, passed in 2024, is the first comprehensive legal framework regulating artificial intelligence. It classifies AI systems by risk level and imposes requirements on high-risk applications including facial recognition, medical diagnosis, and critical infrastructure. The act applies to all AI systems used within the European Union.

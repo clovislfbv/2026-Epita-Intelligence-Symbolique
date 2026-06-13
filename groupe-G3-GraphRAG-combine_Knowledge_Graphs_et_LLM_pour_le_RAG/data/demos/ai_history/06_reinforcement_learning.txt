@@ -1,0 +1,11 @@
+Reinforcement learning (RL) is a paradigm where an agent learns by interacting with an environment and receiving rewards. Richard Sutton and Andrew Barto wrote "Reinforcement Learning: An Introduction", the definitive textbook on the subject. Sutton works at the University of Alberta and is considered the father of modern reinforcement learning.
+
+Q-Learning was developed by Christopher Watkins in his 1989 PhD thesis at Cambridge University. Q-Learning is a model-free RL algorithm that learns the value of actions in states. The Deep Q-Network (DQN) combined Q-Learning with deep neural networks, developed by DeepMind researchers Volodymyr Mnih and colleagues in 2013.
+
+AlphaGo was developed by DeepMind and combined deep reinforcement learning with Monte Carlo Tree Search. AlphaGo defeated European Go champion Fan Hui in 2015 and world champion Lee Sedol in 2016. AlphaGo Zero, released in 2017, learned solely through self-play without any human game data and surpassed all previous versions.
+
+Proximal Policy Optimization (PPO) was developed by John Schulman at OpenAI in 2017. PPO became the standard algorithm for training language models with human feedback. Reinforcement Learning from Human Feedback (RLHF) uses PPO to align AI models with human preferences, and is the technique behind ChatGPT's conversational abilities.
+
+OpenAI Five, an AI system developed by OpenAI using PPO, defeated the world champion Dota 2 team OG in 2019. This demonstrated that RL could master complex real-time strategy games requiring long-term planning and team coordination.
+
+MuZero, developed by DeepMind in 2020, mastered Go, Chess, Shogi, and 57 Atari games without being given the rules. MuZero builds its own internal model of the environment, representing a major advance over AlphaZero.

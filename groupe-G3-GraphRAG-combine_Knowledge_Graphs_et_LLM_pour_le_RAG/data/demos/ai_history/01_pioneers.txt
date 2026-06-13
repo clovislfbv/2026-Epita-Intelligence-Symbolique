@@ -1,0 +1,11 @@
+Alan Turing is widely considered the father of computer science and artificial intelligence. In 1950, Turing published the paper "Computing Machinery and Intelligence", which introduced the Turing Test as a criterion for machine intelligence. Turing worked at the University of Manchester and previously at Bletchley Park, where he helped crack the Enigma cipher during World War II.
+
+John McCarthy coined the term "artificial intelligence" in 1956 and organized the Dartmouth Conference, the founding event of AI as a research field. McCarthy also invented the Lisp programming language in 1958, which became the dominant language for AI research for decades. McCarthy founded the Stanford Artificial Intelligence Laboratory (SAIL) in 1962.
+
+Marvin Minsky co-founded the MIT Artificial Intelligence Laboratory with John McCarthy. Minsky developed the concept of frames as knowledge representation structures. He wrote "Perceptrons" with Seymour Papert in 1969, a book that critically analyzed the limitations of early neural networks and contributed to the first AI winter.
+
+Claude Shannon, known as the father of information theory, worked at Bell Labs and MIT. Shannon's work on information theory provided the mathematical foundation for understanding computation and communication, directly influencing AI research.
+
+Norbert Wiener founded the field of cybernetics, the study of regulatory systems and feedback mechanisms. Cybernetics deeply influenced early AI thinking and robotics. Wiener worked at MIT and wrote "Cybernetics" in 1948.
+
+The Dartmouth Conference of 1956 brought together McCarthy, Minsky, Shannon, and other scientists. This two-month workshop at Dartmouth College is officially considered the birth of artificial intelligence as a discipline. Attendees included Allen Newell and Herbert Simon, who presented the Logic Theorist, the first AI program.

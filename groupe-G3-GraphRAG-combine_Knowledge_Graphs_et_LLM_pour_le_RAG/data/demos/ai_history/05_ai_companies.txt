@@ -1,0 +1,11 @@
+OpenAI was founded in December 2015 by Sam Altman, Elon Musk, Greg Brockman, Ilya Sutskever, Wojciech Zaremba, and John Schulman. OpenAI began as a non-profit research lab with $1 billion in funding and a mission to ensure AI benefits all of humanity. Microsoft invested $13 billion in OpenAI and integrated its models into products like Bing and Azure.
+
+DeepMind was founded in London in 2010 by Demis Hassabis, Shane Legg, and Mustafa Suleyman. Google acquired DeepMind in 2014 for approximately $500 million. DeepMind developed AlphaGo, the first AI to defeat a world champion Go player, and AlphaFold, which solved the protein folding problem.
+
+Demis Hassabis studied at Cambridge University and later King's College London. Before founding DeepMind, Hassabis was a chess prodigy and video game designer. AlphaGo defeated Lee Sedol in 2016, a match watched by 200 million people. AlphaZero later mastered Go, Chess, and Shogi through self-play alone.
+
+Anthropic was founded in 2021 by Dario Amodei, Daniela Amodei, and other former OpenAI researchers. Anthropic focuses on AI safety and developed the Claude family of models. The company pioneered Constitutional AI, a technique for aligning language models with human values. Amazon invested $4 billion in Anthropic in 2023.
+
+Dario Amodei previously served as VP of Research at OpenAI. Daniela Amodei serves as President of Anthropic. Claude, Anthropic's AI assistant, is designed to be helpful, harmless, and honest.
+
+Mistral AI was founded in 2023 by Arthur Mensch, Guillaume Lample, and Timothée Lacroix, former researchers from DeepMind and Meta. Mistral released open-weight models that rivaled larger proprietary models in efficiency. The company raised €105 million in its seed round, the largest in European AI history at the time.

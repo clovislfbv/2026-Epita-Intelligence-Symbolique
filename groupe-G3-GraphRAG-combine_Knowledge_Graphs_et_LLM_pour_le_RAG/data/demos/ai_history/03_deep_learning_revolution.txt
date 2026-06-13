@@ -1,0 +1,11 @@
+AlexNet, created by Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton at the University of Toronto, won the ImageNet competition in 2012 with a top-5 error rate of 15.3%, far better than the runner-up. AlexNet used a deep CNN with ReLU activations and GPU training. This victory marked the beginning of the deep learning revolution.
+
+Alex Krizhevsky later joined Google Brain. Ilya Sutskever co-founded OpenAI and served as its Chief Scientist. The CUDA parallel computing platform developed by NVIDIA enabled the GPU training that made deep learning practical at scale.
+
+Google Brain was founded in 2011 by Jeff Dean, Greg Corrado, and Andrew Ng. The team trained a neural network on YouTube videos to recognize cats without any labeled data, demonstrating unsupervised learning at scale. Google Brain later developed TensorFlow, an open-source machine learning framework released in 2015.
+
+Andrew Ng also co-founded Coursera and led AI at Baidu before founding AI Fund. Ng is known for making AI education widely accessible through online courses. He previously led the Stanford AI Lab.
+
+ResNet, developed by Kaiming He and colleagues at Microsoft Research, won the ImageNet competition in 2015 with a groundbreaking 152-layer deep network using residual connections. Residual connections allow gradients to flow directly through the network, solving the vanishing gradient problem that previously prevented training very deep networks.
+
+Generative Adversarial Networks (GANs) were introduced by Ian Goodfellow in 2014. GANs consist of two neural networks, a generator and a discriminator, trained in opposition. Goodfellow invented GANs at the University of Montreal while working with Yoshua Bengio. GANs enabled realistic image synthesis and became foundational for generative AI.
