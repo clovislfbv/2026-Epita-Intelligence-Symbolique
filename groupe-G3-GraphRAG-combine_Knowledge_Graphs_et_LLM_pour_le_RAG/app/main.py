@@ -142,7 +142,7 @@ async def _build_gen() -> AsyncGenerator[str, None]:
         yield _sse("error", 0, str(e))
 
 
-@app.post("/build")
+@app.get("/build")
 async def build():
     """Trigger an incremental knowledge graph build with SSE progress streaming.
 
