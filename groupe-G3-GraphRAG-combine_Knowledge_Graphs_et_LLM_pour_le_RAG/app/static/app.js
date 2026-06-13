@@ -401,6 +401,9 @@ async function importKG() {
     alert('Import échoué : ' + (err.detail || 'fichier .graphrag invalide.'));
     return;
   }
+  const { docs } = await res.json();
+  document.getElementById('docs-list').innerHTML = '';
+  docs.forEach(addDocItem);
   setAppState('ready');
 }
 

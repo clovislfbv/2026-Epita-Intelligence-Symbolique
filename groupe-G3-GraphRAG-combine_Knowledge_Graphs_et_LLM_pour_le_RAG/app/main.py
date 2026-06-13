@@ -369,7 +369,7 @@ async def import_kg(file: UploadFile = File(...)):
     state["kg"] = kg
     state["docs_map"] = docs_map
 
-    return {"status": "ok", "stats": graph_to_json(kg)["stats"]}
+    return {"status": "ok", "stats": graph_to_json(kg)["stats"], "docs": list(docs_map.keys())}
 
 
 app.mount("/", StaticFiles(directory=_BASE / "static", html=True), name="static")
