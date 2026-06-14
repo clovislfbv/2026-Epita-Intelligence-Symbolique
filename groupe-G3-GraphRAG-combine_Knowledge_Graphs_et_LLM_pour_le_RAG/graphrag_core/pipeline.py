@@ -52,10 +52,10 @@ class PipelineResult:
 _PROMPT = """You are a precise Q&A assistant. Answer the question using ONLY the knowledge graph context below.
 
 Rules:
-- Answer directly. Do NOT start with phrases like "Based on the context", "According to the knowledge graph", etc.
-- Do NOT end with phrases like "That's all the information available" or "This is everything the context provides".
+- Give a SHORT, DIRECT answer — one phrase or one sentence maximum.
+- Do NOT start with "Based on the context", "According to the knowledge graph", etc.
+- Do NOT use markdown (no bold, no bullets, no headers).
 - If the context is insufficient, say only: "I don't have enough information to answer this."
-- Use markdown formatting: bullet points, bold, headers where appropriate.
 
 Context:
 {context}
@@ -71,6 +71,7 @@ def run(
     llm: LLMClient,
     docs_map: Optional[Dict[str, str]] = None,
     max_hops: int = 2,
+    max_nodes: int = 150,
     history: Optional[List[Dict[str, str]]] = None,
 ) -> PipelineResult:
     """Execute the full GraphRAG pipeline for a single question.
@@ -78,14 +79,14 @@ def run(
     The function performs the following steps in order:
 
     1. **Entity detection** — scan the question for KG node names.
-    2. **Fallback** — if no entities are detected, select the top-3 nodes by
-       degree as seeds.
-    3. **Subgraph extraction** — BFS up to *max_hops* hops from the seeds.
-    4. **Context serialisation** — convert the subgraph to a prompt snippet.
-    5. **LLM completion** — call the LLM with the context, question, and any
+    2. **Subgraph extraction** — BFS up to *max_hops* hops from the seeds,
+       capped at *max_nodes* nodes.  If no seeds are found the subgraph is
+       empty and the LLM will report insufficient context.
+    3. **Context serialisation** — convert the subgraph to a prompt snippet.
+    4. **LLM completion** — call the LLM with the context, question, and any
        prior conversation history.
-    6. **Doc matching** — mark any document whose text contains a subgraph node.
-    7. **Result assembly** — package everything into a PipelineResult.
+    5. **Doc matching** — mark any document whose text contains a subgraph node.
+    6. **Result assembly** — package everything into a PipelineResult.
 
     Args:
         question: The natural-language question to answer.
@@ -96,6 +97,9 @@ def run(
             populate ``PipelineResult.docs_used``.  Defaults to ``None``.
         max_hops: Maximum BFS depth when extracting the subgraph.
             Defaults to 2.
+        max_nodes: Hard cap on the number of nodes in the retrieved subgraph.
+            Prevents BFS from exploding on high-degree hub nodes.  Defaults
+            to 150.
         history: Optional prior conversation turns as a list of dicts with
             ``"role"`` and ``"content"`` keys, ordered oldest-first.  Passed
             directly to the LLM so it can reference earlier exchanges.
@@ -108,11 +112,7 @@ def run(
         ValueError: If *question* is an empty string.
     """
     seeds = detect_entities(question, kg)
-    if not seeds:
-        degrees = dict(kg.nx_graph.degree())
-        seeds = sorted(degrees, key=degrees.get, reverse=True)[:3]
-
-    subgraph = extract_subgraph(kg, seeds, max_hops=max_hops)
+    subgraph = extract_subgraph(kg, seeds, max_hops=max_hops, max_nodes=max_nodes)
     context = subgraph_to_context(subgraph)
     answer = llm.complete(_PROMPT.format(context=context, question=question), history=history)
 

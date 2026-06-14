@@ -15,6 +15,32 @@ from typing import List, Set
 
 from .graph import KnowledgeGraph
 
+try:
+    from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS as _SKL_STOPS
+except ImportError:
+    print("[retriever] sklearn not found — falling back to empty stopword base. Install scikit-learn for better entity filtering.")
+    _SKL_STOPS = frozenset()
+
+_ENTITY_STOPWORDS: frozenset = frozenset(_SKL_STOPS) | frozenset({
+    # media / entertainment
+    "film", "films", "movie", "series", "show",
+    "director", "producer", "writer", "actor", "actress",
+    "album", "debut", "song", "band", "comedy", "drama",
+    "debut album", "debut single",
+    # places / institutions
+    "government", "country", "city", "town", "school", "university",
+    "organization", "organisation", "institution", "company", "corporation",
+    # nationality adjectives (single and compound)
+    "american", "english", "french", "german", "british", "korean", "chinese",
+    "south korean", "north korean", "latin american", "australian", "japanese",
+    # generic occupations / roles
+    "consultant", "consultants", "politician", "politicians",
+    "celebrity", "celebrities", "author", "novelist",
+    "member", "members", "leader", "leaders",
+    # generic common nouns observed as spurious seeds
+    "neighborhood", "neighborhoods", "neighbourhood", "neighbourhoods",
+})
+
 
 @dataclass
 class TraceStep:
@@ -55,28 +81,43 @@ class SubgraphResult:
     trace: List[TraceStep] = field(default_factory=list)
 
 
+_HUB_DEGREE_THRESHOLD: int = 50
+
+
 def detect_entities(question: str, kg: KnowledgeGraph) -> List[str]:
     """Detect entity names from a question by matching against KG node names.
 
-    Matching is case-insensitive: a node name is included in the result if
-    its lower-cased form appears as a substring of the lower-cased question.
+    Matching is case-insensitive and requires whole-word boundaries, so short
+    tokens like "it" or "he" do not spuriously match inside longer words.
+    Nodes shorter than 4 characters, in the stopword list, or with degree
+    above _HUB_DEGREE_THRESHOLD (generic hub nodes like "American") are skipped.
 
     Args:
         question: The natural language question to scan.
         kg: The KnowledgeGraph whose node names are matched against.
 
     Returns:
-        A list of node names (preserving original casing) whose lower-cased
-        form is found as a substring of the lower-cased question.
+        A list of node names (preserving original casing) found as whole-word
+        matches in the question, longest matches first to prefer specific
+        entities over shorter ones.
     """
+    import re
     q = question.lower()
-    return [n for n in kg.nx_graph.nodes() if n.lower() in q]
+    matches = [
+        n for n in kg.nx_graph.nodes()
+        if len(n) >= 4
+        and n.lower() not in _ENTITY_STOPWORDS
+        and kg.nx_graph.degree(n) <= _HUB_DEGREE_THRESHOLD
+        and re.search(r'\b' + re.escape(n.lower()) + r'\b', q)
+    ]
+    return sorted(matches, key=len, reverse=True)
 
 
 def extract_subgraph(
     kg: KnowledgeGraph,
     seed_entities: List[str],
     max_hops: int = 2,
+    max_nodes: int = 150,
 ) -> SubgraphResult:
     """Extract a subgraph by BFS from seed entities up to *max_hops* hops.
 
@@ -108,16 +149,20 @@ def extract_subgraph(
         for node in frontier:
             if node not in G:
                 continue
+            if len(visited) >= max_nodes:
+                continue
             for _, nbr, data in G.out_edges(node, data=True):
                 edges.append((node, data.get("relation", ""), nbr))
-                if nbr not in visited:
+                if nbr not in visited and len(visited) < max_nodes:
                     visited.add(nbr)
-                    next_frontier.add(nbr)
+                    if G.degree(nbr) <= _HUB_DEGREE_THRESHOLD:
+                        next_frontier.add(nbr)
             for pred, _, data in G.in_edges(node, data=True):
                 edges.append((pred, data.get("relation", ""), node))
-                if pred not in visited:
+                if pred not in visited and len(visited) < max_nodes:
                     visited.add(pred)
-                    next_frontier.add(pred)
+                    if G.degree(pred) <= _HUB_DEGREE_THRESHOLD:
+                        next_frontier.add(pred)
         if next_frontier:
             trace.append(
                 TraceStep(

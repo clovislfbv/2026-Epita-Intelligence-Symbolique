@@ -87,7 +87,7 @@ class AnthropicClient(LLMClient):
         for attempt in range(6):
             try:
                 msg = self._client.messages.create(
-                    model=self.model, max_tokens=1024, messages=messages
+                    model=self.model, max_tokens=8192, messages=messages
                 )
                 return msg.content[0].text
             except anthropic.RateLimitError as exc:
