@@ -38,6 +38,94 @@ Le GraphRAG (Graph-based Retrieval-Augmented Generation) represente une evolutio
 
 ---
 
+## Structure du projet
+
+```
+groupe-G3-GraphRAG-combine_Knowledge_Graphs_et_LLM_pour_le_RAG/
+├── app/                     # Serveur FastAPI + interface web
+│   ├── main.py              # Endpoints REST et streaming SSE
+│   ├── models.py            # Schemas Pydantic
+│   └── static/              # Interface (index.html / style.css / app.js)
+├── graphrag_core/           # Bibliotheque GraphRAG
+│   ├── extractor.py         # Extraction triplets entite-relation-entite (LLM)
+│   ├── graph.py             # Construction et requetage du KG (RDF + NetworkX)
+│   ├── llm.py               # Client LLM unifie (OpenAI / Anthropic / Ollama)
+│   ├── pipeline.py          # Pipeline QA — BFS multi-hop + LLM
+│   └── retriever.py         # Retrieval hybride (BFS + embeddings)
+├── notebooks/               # Notebooks Jupyter (benchmark, KG, GraphRAG, SPARQL)
+├── tests/                   # Tests unitaires pytest
+├── data/                    # Donnees auto-generees au runtime
+│   ├── custom/              # Documents uploades via l'interface
+│   └── hotpotqa/            # Echantillons HotpotQA (telecharges automatiquement)
+├── docs/                    # Design docs et visualisations
+├── .env.example             # Gabarit de configuration
+├── pyproject.toml           # Dependances et config projet (uv)
+└── requirements.txt         # Dependances pip
+```
+
+## Lancement
+
+### Prerequis
+
+- Python >= 3.13
+- [uv](https://docs.astral.sh/uv/) (recommande) ou pip
+- Une cle API : OpenAI, Anthropic, ou Ollama en local
+
+### Installation
+
+```bash
+cd groupe-G3-GraphRAG-combine_Knowledge_Graphs_et_LLM_pour_le_RAG
+
+# Avec uv (recommande)
+uv sync
+
+# Ou avec pip
+python -m venv .venv
+.venv\Scripts\activate       # Windows
+# source .venv/bin/activate  # Linux/macOS
+pip install -r requirements.txt
+```
+
+### Configuration
+
+```bash
+cp .env.example .env
+```
+
+Editer `.env` et renseigner au minimum :
+
+```env
+LLM_PROVIDER=openai          # openai | anthropic | ollama
+LLM_MODEL=gpt-4o-mini
+OPENAI_API_KEY=sk-...        # ou ANTHROPIC_API_KEY / OLLAMA_BASE_URL
+```
+
+### Demarrage du serveur
+
+```bash
+# Avec uv
+uv run uvicorn app.main:app --reload
+
+# Ou directement (dans le venv active)
+uvicorn app.main:app --reload
+```
+
+Interface disponible sur **http://localhost:8000**
+
+### Notebooks
+
+```bash
+uv run jupyter notebook notebooks/
+```
+
+### Tests
+
+```bash
+uv run pytest
+```
+
+---
+
 ## Ressources communes a tous les sujets
 
 ### Solveurs et outils
