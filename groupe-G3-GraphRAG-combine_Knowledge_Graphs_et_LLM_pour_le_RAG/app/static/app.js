@@ -1,7 +1,7 @@
 const API = '';
 let appState = 'upload';
-let lastSubgraphNodes = new Set();
-let lastSubgraphEdges = new Set();
+let lastSubgraphNodes = [];
+let lastSubgraphEdges = [];
 let simulation = null;
 let graphData = null;
 /** @type {Array<{role: string, content: string}>} */
@@ -165,7 +165,9 @@ async function sendMessage() {
     });
     const data = await r.json();
     updateMessage(typingId, data);
-    highlightSubgraph(data.subgraph_nodes, data.subgraph_edges);
+    lastSubgraphNodes = data.subgraph_nodes;
+    lastSubgraphEdges = data.subgraph_edges;
+    showFocusSubgraph(lastSubgraphNodes, lastSubgraphEdges);
     chatHistory.push({ role: 'user', content: q });
     chatHistory.push({ role: 'assistant', content: data.answer });
   } catch (err) {
@@ -419,19 +421,28 @@ function renderGraph(data) {
 }
 
 /**
- * Highlights nodes and edges in the graph that were part of the last query's subgraph.
- * Highlighted elements are shown in amber; others revert to their community color.
- * @param {string[]} nodes - Node ids to highlight.
- * @param {Array} edges - Edge tuples [source, relation, target] to highlight.
+ * Renders the subgraph of the latest Q&A answer directly (no community
+ * overview needed first) — the pipeline already caps this at <=150 nodes.
+ * @param {string[]} nodeNames - Node ids from the query response.
+ * @param {Array} edgeTuples - [source, relation, target] tuples from the query response.
  */
-function highlightSubgraph(nodes, edges) {
-  if (!graphData) return;
-  const nodeSet = new Set(nodes);
-  const edgeSet = new Set(edges.map(e => `${e[0]}-${e[2]}`));
-  d3.selectAll('.node circle').attr('stroke', d => nodeSet.has(d.id) ? '#f59e0b' : d.color)
-    .attr('stroke-width', d => nodeSet.has(d.id) ? 3 : 2.5);
-  d3.selectAll('line').attr('stroke', d => edgeSet.has(`${d.source.id || d.source}-${d.target.id || d.target}`) ? '#f59e0b' : '#ddd6fe')
-    .attr('stroke-width', d => edgeSet.has(`${d.source.id || d.source}-${d.target.id || d.target}`) ? 2.5 : 1.5);
+function showFocusSubgraph(nodeNames, edgeTuples) {
+  const nodeSet = new Set(nodeNames);
+  const nodes = nodeNames.map(id => ({
+    id,
+    community: 0,
+    color: '#f59e0b',
+    degree: edgeTuples.filter(e => e[0] === id || e[2] === id).length,
+  }));
+  const edges = edgeTuples
+    .filter(e => nodeSet.has(e[0]) && nodeSet.has(e[2]))
+    .map(e => ({ source: e[0], target: e[2], relation: e[1] }));
+  viewMode = 'detail';
+  currentCommunityId = null;
+  graphData = { nodes, edges };
+  document.getElementById('graph-back-btn').style.display = 'inline-block';
+  document.getElementById('load-more-btn').style.display = 'none';
+  renderGraph(graphData);
 }
 
 /**
