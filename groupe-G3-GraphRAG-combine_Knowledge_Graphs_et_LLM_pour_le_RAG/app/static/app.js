@@ -259,6 +259,8 @@ let viewMode = 'detail';
 let overviewData = null;
 let currentCommunityId = null;
 let currentLimit = 150;
+let selectedNodeId = null;
+const expandOrigins = new Map();
 
 /** Returns visual radius for a node based on degree. */
 function nodeRadius(d) { return Math.max(4, Math.sqrt((d.degree || 1) + 1) * 2.8); }
@@ -334,8 +336,48 @@ function mergeIntoGraph(newNodes, newEdges) {
  * @param {string} name - The node id to expand.
  */
 async function expandNode(name) {
+  const beforeIds = new Set(graphData.nodes.map(n => n.id));
   const data = await (await fetch(`${API}/graph/node/${encodeURIComponent(name)}/neighbors?limit=40`)).json();
   mergeIntoGraph(data.nodes, data.edges);
+  const added = new Set(graphData.nodes.map(n => n.id).filter(id => !beforeIds.has(id)));
+  if (added.size > 0) {
+    const prev = expandOrigins.get(name) || new Set();
+    expandOrigins.set(name, new Set([...prev, ...added]));
+  }
+  // Show collapse button now that this node has been expanded
+  const colBtn = document.getElementById('node-info-collapse');
+  if (colBtn && selectedNodeId === name) colBtn.style.display = '';
+}
+
+/**
+ * Removes a node's exclusively-connected neighbors from the graph.
+ * "Exclusive" = only connected to nodes that were themselves added by this expand call.
+ * @param {string} name - The node id whose expand result to prune.
+ */
+function collapseNode(name) {
+  const added = expandOrigins.get(name);
+  if (!added || added.size === 0) return;
+
+  const sId = e => typeof e.source === 'object' ? e.source.id : e.source;
+  const tId = e => typeof e.target === 'object' ? e.target.id : e.target;
+
+  // A node is exclusive if ALL its connections are within added ∪ {name}
+  const bubble = new Set([...added, name]);
+  const exclusive = [...added].filter(id => {
+    const connections = graphData.edges.filter(e => sId(e) === id || tId(e) === id);
+    return connections.every(e => bubble.has(sId(e)) && bubble.has(tId(e)));
+  });
+
+  const removeSet = new Set(exclusive);
+  graphData.nodes = graphData.nodes.filter(n => !removeSet.has(n.id));
+  graphData.edges = graphData.edges.filter(e => !removeSet.has(sId(e)) && !removeSet.has(tId(e)));
+  expandOrigins.delete(name);
+
+  renderGraph(graphData);
+
+  // Re-open the node info to reflect the new state (collapse btn hidden again)
+  const node = graphData.nodes.find(n => n.id === name);
+  if (node) openNodeInfo(node);
 }
 
 /**
@@ -376,10 +418,10 @@ function renderGraph(data) {
 
     simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(d => d.id).distance(75))
-      .force('charge', d3.forceManyBody().strength(-160).distanceMax(250))
+      .force('charge', d3.forceManyBody().strength(-350).distanceMax(400))
       .force('center', d3.forceCenter(W / 2, H / 2))
-      .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 3))
-      .alphaDecay(0.025).velocityDecay(0.4)
+      .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 12))
+      .alphaDecay(0.018).velocityDecay(0.35)
       .on('tick', () => {
         gLinks.selectAll('line').attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
         gNodes.selectAll('g.node').attr('transform', d => `translate(${d.x},${d.y})`);
@@ -398,7 +440,7 @@ function renderGraph(data) {
   const nodeJoin = gNodes.selectAll('g.node').data(data.nodes, d => d.id);
   const entering = nodeJoin.enter().append('g').attr('class', 'node')
     .call(d3.drag().on('start', dragstart).on('drag', dragged).on('end', dragend))
-    .on('click', (event, d) => expandNode(d.id))
+    .on('click', (event, d) => openNodeInfo(d))
     .on('mouseover', (event, d) => {
       const sId = e => typeof e.source === 'object' ? e.source.id : e.source;
       const tId = e => typeof e.target === 'object' ? e.target.id : e.target;
@@ -427,6 +469,13 @@ function renderGraph(data) {
   simulation.nodes(data.nodes);
   simulation.force('link').links(data.edges);
   simulation.alpha(0.3).restart();
+
+  // Re-apply selection highlight after merge
+  if (selectedNodeId) {
+    gNodes.selectAll('g.node').select('circle')
+      .attr('stroke', d => d.id === selectedNodeId ? '#ffffff' : d.color)
+      .attr('stroke-width', d => d.id === selectedNodeId ? 2 : 0.5);
+  }
 }
 
 /**
@@ -479,6 +528,55 @@ function renderCommunityFilters(communities) {
     btn.textContent = `● ${c.label}`;
     container.appendChild(btn);
   });
+}
+
+/**
+ * Opens the node-info side panel for a clicked node, showing its relations
+ * and wiring the expand button to load 1-hop neighbors.
+ * @param {Object} d - D3 node datum.
+ */
+function openNodeInfo(d) {
+  selectedNodeId = d.id;
+
+  document.getElementById('node-info-name').textContent = d.id;
+  document.getElementById('node-info-meta').textContent =
+    `comm ${d.community ?? '—'} · deg ${d.degree ?? 0}`;
+
+  const sId = e => typeof e.source === 'object' ? e.source.id : e.source;
+  const tId = e => typeof e.target === 'object' ? e.target.id : e.target;
+  const rels = (graphData?.edges || []).filter(e => sId(e) === d.id || tId(e) === d.id);
+
+  const relList = document.getElementById('node-info-rels');
+  relList.innerHTML = '';
+  if (!rels.length) {
+    relList.innerHTML = '<div style="font-size:11px;color:var(--text-faint)">No relations in current view</div>';
+  } else {
+    rels.slice(0, 25).forEach(e => {
+      const isSource = sId(e) === d.id;
+      const other = isSource ? tId(e) : sId(e);
+      const arrow = isSource ? '→' : '←';
+      const card = document.createElement('div');
+      card.className = 'rel-card';
+      card.innerHTML = `<div class="rel-card-predicate">${arrow} [${e.relation}]</div><div class="rel-card-target">${other}</div>`;
+      card.addEventListener('click', () => {
+        const target = (graphData?.nodes || []).find(n => n.id === other);
+        if (target) openNodeInfo(target);
+      });
+      relList.appendChild(card);
+    });
+  }
+
+  document.getElementById('node-info-expand').onclick = () => expandNode(d.id);
+
+  const colBtn = document.getElementById('node-info-collapse');
+  colBtn.style.display = expandOrigins.has(d.id) ? '' : 'none';
+  colBtn.onclick = () => collapseNode(d.id);
+
+  if (gNodes) gNodes.selectAll('g.node').select('circle')
+    .attr('stroke', n => n.id === d.id ? '#ffffff' : n.color)
+    .attr('stroke-width', n => n.id === d.id ? 2 : 0.5);
+
+  document.getElementById('node-info').style.display = 'block';
 }
 
 /**
@@ -553,6 +651,13 @@ async function importKG() {
 
 document.getElementById('export-btn').addEventListener('click', exportKG);
 document.getElementById('import-input').addEventListener('change', importKG);
+
+document.getElementById('node-info-close').addEventListener('click', () => {
+  document.getElementById('node-info').style.display = 'none';
+  selectedNodeId = null;
+  if (gNodes) gNodes.selectAll('g.node').select('circle')
+    .attr('stroke', d => d.color).attr('stroke-width', 0.5);
+});
 
 document.getElementById('new-chat-btn').addEventListener('click', () => {
   chatHistory = [];
