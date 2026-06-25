@@ -98,6 +98,16 @@ document.getElementById('reset-btn').addEventListener('click', async () => {
   setAppState('upload');
 });
 
+document.getElementById('graph-back-btn').addEventListener('click', () => {
+  document.getElementById('load-more-btn').style.display = 'none';
+  loadGraphOverview();
+});
+
+document.getElementById('load-more-btn').addEventListener('click', async () => {
+  const truncated = await loadMoreCommunity();
+  document.getElementById('load-more-btn').style.display = truncated ? 'inline-block' : 'none';
+});
+
 const STAGES = ['extraction', 'graph_build', 'community_detection', 'indexing'];
 document.getElementById('build-btn').addEventListener('click', async () => {
   setAppState('building');
@@ -296,6 +306,63 @@ function renderOverview(data) {
 }
 
 /**
+ * Fetches a community's nodes/edges and renders them, replacing the overview.
+ * @param {number} id - The community id to open.
+ */
+async function openCommunity(id) {
+  const data = await (await fetch(`${API}/graph/community/${id}?limit=150`)).json();
+  viewMode = 'detail';
+  currentCommunityId = id;
+  currentLimit = 150;
+  graphData = { nodes: data.nodes, edges: data.edges };
+  document.getElementById('graph-back-btn').style.display = 'inline-block';
+  document.getElementById('load-more-btn').style.display = data.truncated ? 'inline-block' : 'none';
+  renderGraph(graphData);
+}
+
+/**
+ * Merges newly fetched nodes/edges into the currently rendered graph in place,
+ * then re-renders. Nodes that already exist keep their D3-assigned x/y
+ * (force simulations only randomize position for nodes missing x/y), so
+ * already-visible nodes do not jump when new ones are added.
+ * @param {Array} newNodes - Node objects to add (deduped by id).
+ * @param {Array} newEdges - Edge objects to add (deduped by source-target pair).
+ */
+function mergeIntoGraph(newNodes, newEdges) {
+  const existingIds = new Set(graphData.nodes.map(n => n.id));
+  for (const n of newNodes) {
+    if (!existingIds.has(n.id)) { graphData.nodes.push(n); existingIds.add(n.id); }
+  }
+  const edgeKey = e => `${e.source}->${e.target}`;
+  const existingEdgeKeys = new Set(graphData.edges.map(edgeKey));
+  for (const e of newEdges) {
+    const k = edgeKey(e);
+    if (!existingEdgeKeys.has(k)) { graphData.edges.push(e); existingEdgeKeys.add(k); }
+  }
+  renderGraph(graphData);
+}
+
+/**
+ * Fetches a node's 1-hop neighbors and merges them into the current view.
+ * @param {string} name - The node id to expand.
+ */
+async function expandNode(name) {
+  const data = await (await fetch(`${API}/graph/node/${encodeURIComponent(name)}/neighbors?limit=40`)).json();
+  mergeIntoGraph(data.nodes, data.edges);
+}
+
+/**
+ * Re-fetches the current community at a higher limit and merges the result.
+ * @returns {Promise<boolean>} Whether the community still has more nodes beyond the new limit.
+ */
+async function loadMoreCommunity() {
+  currentLimit += 150;
+  const data = await (await fetch(`${API}/graph/community/${currentCommunityId}?limit=${currentLimit}`)).json();
+  mergeIntoGraph(data.nodes, data.edges);
+  return data.truncated;
+}
+
+/**
  * Renders a D3.js force-directed graph into the #graph-svg element.
  * @param {Object} data - Graph data with nodes, edges arrays and stats.
  */
@@ -325,6 +392,8 @@ function renderGraph(data) {
   node.append('text').text(d => d.id).attr('text-anchor', 'middle').attr('dy', 4)
     .attr('font-size', 9).attr('fill', d => d.color).attr('font-weight', '600')
     .style('pointer-events', 'none');
+
+  node.on('click', (event, d) => expandNode(d.id));
 
   const tooltip = document.getElementById('graph-tooltip');
   node.on('mouseover', (event, d) => {
