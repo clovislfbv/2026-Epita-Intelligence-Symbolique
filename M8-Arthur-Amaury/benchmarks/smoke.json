@@ -1,0 +1,34 @@
+[
+  {
+    "id": "smoke_true",
+    "title": "True introduction",
+    "suite": "smoke",
+    "difficulty": "easy",
+    "imports": "",
+    "statement": "theorem smoke_true : True := by",
+    "source": "local",
+    "expected_tactics": ["trivial"],
+    "description": "Small deterministic theorem for live checks.",
+    "replay_trace": "sample_success.json"
+  },
+  {
+    "id": "smoke_and_swap",
+    "title": "Swap conjunction",
+    "suite": "smoke",
+    "difficulty": "easy",
+    "imports": "",
+    "statement": "theorem smoke_and_swap (p q : Prop) : p ∧ q → q ∧ p := by",
+    "source": "local",
+    "expected_tactics": ["intro h", "constructor", "exact h.right", "exact h.left"]
+  },
+  {
+    "id": "smoke_nat_zero_add",
+    "title": "Zero plus natural",
+    "suite": "smoke",
+    "difficulty": "easy",
+    "imports": "",
+    "statement": "theorem smoke_nat_zero_add (n : Nat) : 0 + n = n := by",
+    "source": "local",
+    "expected_tactics": ["simp"]
+  }
+]

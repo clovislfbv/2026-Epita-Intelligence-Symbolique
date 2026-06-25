@@ -1,0 +1,90 @@
+[
+  {
+    "id": "minif2f_mathd_algebra_17",
+    "title": "miniF2F-style algebra identity",
+    "suite": "minif2f_subset",
+    "difficulty": "starter",
+    "imports": "import Mathlib",
+    "statement": "theorem minif2f_mathd_algebra_17 (a b : Nat) : a + b = b + a := by",
+    "source": "miniF2F curated subset",
+    "expected_tactics": ["exact Nat.add_comm a b"],
+    "description": "A tiny Lean 4 compatible starter item that keeps the miniF2F benchmark path visible. Requires M8_LEAN_PROJECT_DIR for real Mathlib verification."
+  },
+  {
+    "id": "minif2f_logic_imp",
+    "title": "miniF2F-style implication",
+    "suite": "minif2f_subset",
+    "difficulty": "starter",
+    "imports": "",
+    "statement": "theorem minif2f_logic_imp (p q : Prop) : p → q → p := by",
+    "source": "miniF2F curated subset",
+    "expected_tactics": ["intro hp", "intro hq", "exact hp"],
+    "description": "Starter theorem for validating proof-loop plumbing before importing a larger miniF2F slice."
+  },
+  {
+    "id": "minif2f_logic_and_swap",
+    "title": "miniF2F-style conjunction swap",
+    "suite": "minif2f_subset",
+    "difficulty": "starter",
+    "imports": "",
+    "statement": "theorem minif2f_logic_and_swap (p q : Prop) : p ∧ q → q ∧ p := by",
+    "source": "miniF2F curated subset",
+    "expected_tactics": ["intro h", "constructor", "exact h.right", "exact h.left"],
+    "description": "Pure Lean proposition that shows a multi-step tactic proof without requiring Mathlib."
+  },
+  {
+    "id": "minif2f_nat_zero_add",
+    "title": "miniF2F-style zero plus natural",
+    "suite": "minif2f_subset",
+    "difficulty": "starter",
+    "imports": "",
+    "statement": "theorem minif2f_nat_zero_add (n : Nat) : 0 + n = n := by",
+    "source": "miniF2F curated subset",
+    "expected_tactics": ["simp"],
+    "description": "Fast simplification example for a reliable live Lean verification."
+  },
+  {
+    "id": "mathd_numbertheory_299",
+    "title": "miniF2F-v2 ones digit product",
+    "suite": "minif2f_subset",
+    "difficulty": "valid-arithmetic",
+    "imports": "import Mathlib\nimport Aesop\n\nset_option maxHeartbeats 0\n\nopen BigOperators Real Nat Topology Rat",
+    "statement": "theorem mathd_numbertheory_299 : 1 * 3 * 5 * 7 * 9 * 11 * 13 % 10 = 5 := by",
+    "source": "miniF2F-v2 valid curated subset",
+    "expected_tactics": ["norm_num"],
+    "description": "Actual miniF2F-v2 arithmetic problem: prove the ones digit of a product with Mathlib automation."
+  },
+  {
+    "id": "mathd_numbertheory_237",
+    "title": "miniF2F-v2 sum modulo six",
+    "suite": "minif2f_subset",
+    "difficulty": "valid-arithmetic",
+    "imports": "import Mathlib\nimport Aesop\n\nset_option maxHeartbeats 0\n\nopen BigOperators Real Nat Topology Rat",
+    "statement": "theorem mathd_numbertheory_237 : (∑ k ∈ Finset.range 100, (k+1)) % 6 = 4 := by",
+    "source": "miniF2F-v2 valid curated subset",
+    "expected_tactics": ["norm_num"],
+    "description": "Actual miniF2F-v2 finite-sum modular arithmetic item for showing benchmark realism."
+  },
+  {
+    "id": "mathd_algebra_419",
+    "title": "miniF2F-v2 substituted expression",
+    "suite": "minif2f_subset",
+    "difficulty": "valid-algebra",
+    "imports": "import Mathlib\nimport Aesop\n\nset_option maxHeartbeats 0\n\nopen BigOperators Real Nat Topology Rat",
+    "statement": "theorem mathd_algebra_419 (a b : ℝ) (h₀ : a = -1) (h₁ : b = 5) : -a - b ^ 2 + 3 * (a * b) = -39 := by",
+    "source": "miniF2F-v2 valid curated subset",
+    "expected_tactics": ["rw [h₀, h₁]", "norm_num"],
+    "description": "Actual miniF2F-v2 algebra item that needs hypothesis rewriting before arithmetic closes."
+  },
+  {
+    "id": "minif2f_real_square_expansion",
+    "title": "miniF2F-style real square expansion",
+    "suite": "minif2f_subset",
+    "difficulty": "mathlib-algebra",
+    "imports": "import Mathlib",
+    "statement": "theorem minif2f_real_square_expansion (x y : ℝ) : (x + y) ^ 2 = x ^ 2 + 2 * x * y + y ^ 2 := by",
+    "source": "miniF2F curated subset",
+    "expected_tactics": ["ring"],
+    "description": "Mathlib algebra example for demonstrating tactic selection beyond propositional Lean."
+  }
+]

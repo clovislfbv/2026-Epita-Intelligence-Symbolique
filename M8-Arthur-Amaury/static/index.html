@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>M8 Lean Proof Agent</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>Multi-Agent Lean Proof Agent</h1>
+          <p class="subtitle">LLM candidates are searched by beam or MCTS; Lean probes goals and verifies every accepted proof.</p>
+        </div>
+        <div id="health" class="pill">Checking...</div>
+      </header>
+
+      <section class="workspace">
+        <aside class="controls">
+          <label>Benchmark
+            <select id="suite">
+              <option value="smoke">Smoke: fast plumbing</option>
+              <option value="minif2f_subset">miniF2F subset: curated benchmark</option>
+              <option value="minif2f_v2s">miniF2F v2s: full 488</option>
+            </select>
+          </label>
+          <label>Theorem
+            <select id="theorem"></select>
+          </label>
+          <label>Mode
+            <select id="mode">
+              <option value="replay">replay</option>
+              <option value="real">real run</option>
+            </select>
+          </label>
+          <label>Provider
+            <select id="provider"></select>
+          </label>
+          <label id="maxAttemptsLabel">Max attempts
+            <input id="maxAttempts" type="number" min="1" max="8" value="3">
+          </label>
+          <label>Search strategy
+            <select id="searchStrategy">
+              <option value="beam">Beam search</option>
+              <option value="mcts">MCTS tree search</option>
+            </select>
+          </label>
+          <label>Beam width
+            <input id="beamWidth" type="number" min="1" max="5" value="3">
+          </label>
+          <label id="mctsIterationsLabel">MCTS iterations
+            <input id="mctsIterations" type="number" min="1" max="40" value="12">
+          </label>
+          <div class="method-summary">
+            <strong id="suiteSummary"></strong>
+            <span id="suiteComparison"></span>
+            <strong id="searchSummary"></strong>
+            <span id="searchComparison"></span>
+          </div>
+          <div id="runBudget" class="run-budget">Up to 9 candidate verifications per theorem.</div>
+          <button id="run">Run</button>
+          <button id="runSuite">Run suite</button>
+          <button id="download" disabled>Download trace</button>
+        </aside>
+
+        <section class="problem">
+          <h2 id="title">Select a theorem</h2>
+          <p id="description"></p>
+          <pre id="statement"></pre>
+        </section>
+      </section>
+
+      <section class="results">
+        <div class="results-head">
+          <h2>Proof Trace</h2>
+          <p id="summary">No run yet.</p>
+        </div>
+        <div id="scorePanel" class="score-panel" hidden>
+          <div id="scoreSummary" class="score-summary"></div>
+          <div id="scoreTable" class="score-table"></div>
+        </div>
+        <div class="trace-grid">
+          <div>
+            <div id="timeline" class="timeline"></div>
+            <h3>Final Proof</h3>
+            <pre id="finalProof"></pre>
+          </div>
+          <aside class="detail-panel">
+            <h3 id="detailTitle">Step Details</h3>
+            <pre id="detailPayload">Click a trace step to inspect the raw event payload, proof candidate, Lean command, and verifier logs.</pre>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
