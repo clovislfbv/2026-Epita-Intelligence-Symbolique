@@ -98,3 +98,30 @@ def test_community_detail_unknown_id_empty():
     assert data["nodes"] == []
     assert data["edges"] == []
     assert data["truncated"] is False
+
+
+def test_node_neighbors_excludes_self():
+    """node_neighbors returns only the neighbors, never the queried node itself."""
+    from graphrag_core.graph import node_neighbors
+    kg = build_knowledge_graph(TRIPLES, {})
+    data = node_neighbors(kg, "Alice")
+    ids = {n["id"] for n in data["nodes"]}
+    assert "Alice" not in ids
+    assert ids == {"ACME", "Bob"}
+    assert data["truncated"] is False
+
+
+def test_node_neighbors_unknown_node_empty():
+    """node_neighbors returns an empty result for a node absent from the graph."""
+    from graphrag_core.graph import node_neighbors
+    kg = build_knowledge_graph(TRIPLES, {})
+    assert node_neighbors(kg, "Nobody") == {"nodes": [], "edges": [], "truncated": False}
+
+
+def test_node_neighbors_truncates_with_limit():
+    """node_neighbors truncates to `limit` and reports truncated=True."""
+    from graphrag_core.graph import node_neighbors
+    kg = build_knowledge_graph(TRIPLES, {})
+    data = node_neighbors(kg, "Alice", limit=1)
+    assert len(data["nodes"]) == 1
+    assert data["truncated"] is True

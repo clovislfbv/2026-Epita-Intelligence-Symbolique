@@ -247,3 +247,57 @@ def community_detail(kg: KnowledgeGraph, community_id: int, limit: int = 150) ->
         "truncated": total > limit,
         "total_in_community": total,
     }
+
+
+def node_neighbors(kg: KnowledgeGraph, node_name: str, limit: int = 40) -> Dict[str, Any]:
+    """Serialise the immediate (1-hop) neighbors of a single node.
+
+    The queried node itself is never included in the result — only its
+    neighbors and the edges directly connecting it to each of them.
+
+    Args:
+        kg: The KnowledgeGraph to read from.
+        node_name: The node to expand.
+        limit: Maximum number of neighbors to return, highest-degree first.
+            Defaults to 40.
+
+    Returns:
+        A dict with ``nodes``, ``edges`` (each edge has one endpoint equal
+        to *node_name*), and ``truncated``. All empty/False if *node_name*
+        is not in the graph.
+    """
+    G = kg.nx_graph
+    if node_name not in G:
+        return {"nodes": [], "edges": [], "truncated": False}
+
+    raw_edges = [(node_name, d.get("relation", ""), nbr) for _, nbr, d in G.out_edges(node_name, data=True)]
+    raw_edges += [(pred, d.get("relation", ""), node_name) for pred, _, d in G.in_edges(node_name, data=True)]
+
+    neighbors = list(dict.fromkeys(tgt if src == node_name else src for src, _, tgt in raw_edges))
+    neighbors.sort(key=lambda n: G.degree(n), reverse=True)
+    total = len(neighbors)
+    selected = set(neighbors[:limit])
+
+    nodes = [
+        {
+            "id": n,
+            "community": kg.node_to_community.get(n, 0),
+            "color": _COLORS[kg.node_to_community.get(n, 0) % len(_COLORS)],
+            "degree": G.degree(n),
+        }
+        for n in neighbors[:limit]
+    ]
+
+    seen_e = set()
+    edges = []
+    for src, rel, tgt in raw_edges:
+        other = tgt if src == node_name else src
+        if other not in selected:
+            continue
+        key = (src, rel, tgt)
+        if key in seen_e:
+            continue
+        seen_e.add(key)
+        edges.append({"source": src, "target": tgt, "relation": rel})
+
+    return {"nodes": nodes, "edges": edges, "truncated": total > limit}
