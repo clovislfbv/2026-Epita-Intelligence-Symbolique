@@ -22,7 +22,13 @@ load_dotenv()
 
 from graphrag_core.llm import get_llm_client
 from graphrag_core.extractor import extract_triples
-from graphrag_core.graph import build_knowledge_graph, graph_to_json
+from graphrag_core.graph import (
+    build_knowledge_graph,
+    graph_to_json,
+    community_overview,
+    community_detail,
+    node_neighbors,
+)
 from graphrag_core.pipeline import run as pipeline_run
 from app.models import (
     QueryRequest, QueryResponse, DatasetSelectRequest,
@@ -212,20 +218,58 @@ async def build():
     return StreamingResponse(_build_gen(), media_type="text/event-stream")
 
 
-@app.get("/graph")
-async def get_graph():
-    """Return the serialised knowledge graph as JSON.
+@app.get("/graph/overview")
+async def graph_overview():
+    """Return the community-level summary of the knowledge graph.
 
     Returns:
-        A JSON-serialisable dict produced by ``graph_to_json`` containing
-        ``nodes``, ``edges``, ``communities``, and ``stats``.
+        A dict with ``communities`` and ``stats``, regardless of graph size.
 
     Raises:
         HTTPException: 404 if the knowledge graph has not been built yet.
     """
     if state["kg"] is None:
         raise HTTPException(404, "KG not built")
-    return graph_to_json(state["kg"])
+    return community_overview(state["kg"])
+
+
+@app.get("/graph/community/{community_id}")
+async def graph_community(community_id: int, limit: int = 150):
+    """Return the nodes and internal edges of a single community.
+
+    Args:
+        community_id: The id of the community to expand.
+        limit: Maximum number of nodes to return, highest-degree first.
+
+    Returns:
+        A dict with ``nodes``, ``edges``, ``truncated``, and
+        ``total_in_community``.
+
+    Raises:
+        HTTPException: 404 if the knowledge graph has not been built yet.
+    """
+    if state["kg"] is None:
+        raise HTTPException(404, "KG not built")
+    return community_detail(state["kg"], community_id, limit)
+
+
+@app.get("/graph/node/{node_name}/neighbors")
+async def graph_node_neighbors(node_name: str, limit: int = 40):
+    """Return the immediate neighbors of a single node.
+
+    Args:
+        node_name: The node to expand.
+        limit: Maximum number of neighbors to return, highest-degree first.
+
+    Returns:
+        A dict with ``nodes``, ``edges``, and ``truncated``.
+
+    Raises:
+        HTTPException: 404 if the knowledge graph has not been built yet.
+    """
+    if state["kg"] is None:
+        raise HTTPException(404, "KG not built")
+    return node_neighbors(state["kg"], node_name, limit)
 
 
 @app.post("/query", response_model=QueryResponse)
