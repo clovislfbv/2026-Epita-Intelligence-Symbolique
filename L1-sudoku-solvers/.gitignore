@@ -1,0 +1,22 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Generated benchmark artifacts (keep the directory layout, ignore large outputs)
+benchmarks/results/*.csv
+reports/plots/*
+reports/report.md
+
+# Keep placeholder files so the directory layout survives a fresh clone
+!benchmarks/results/.gitkeep
+!reports/plots/.gitkeep
+
+# Editor / OS junk
+.DS_Store
+.idea/
+.vscode/
+*.swp

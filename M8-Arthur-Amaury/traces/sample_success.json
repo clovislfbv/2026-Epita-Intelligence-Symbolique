@@ -1,0 +1,76 @@
+{
+  "run_id": "sample-success-smoke-true",
+  "theorem": {
+    "id": "smoke_true",
+    "title": "True introduction",
+    "suite": "smoke",
+    "difficulty": "easy",
+    "imports": "",
+    "statement": "theorem smoke_true : True := by",
+    "source": "local",
+    "expected_tactics": ["trivial"],
+    "replay_trace": "sample_success.json",
+    "description": "Small deterministic theorem for live checks."
+  },
+  "mode": "replay",
+  "provider": "openai",
+  "model": "gpt-test",
+  "status": "success",
+  "events": [
+    {
+      "index": 1,
+      "kind": "run_started",
+      "agent": "orchestrator",
+      "message": "Starting proof search for smoke_true",
+      "payload": {}
+    },
+    {
+      "index": 2,
+      "kind": "plan_created",
+      "agent": "decomposer",
+      "message": "Created tactic-oriented proof plan",
+      "payload": {"expected_tactics": ["trivial"]}
+    },
+    {
+      "index": 3,
+      "kind": "candidate_created",
+      "agent": "tactic_agent",
+      "message": "Use expected tactics from the curated benchmark metadata.",
+      "payload": {"proof": "trivial"}
+    },
+    {
+      "index": 4,
+      "kind": "verification_finished",
+      "agent": "verifier",
+      "message": "Lean accepted the candidate",
+      "payload": {"status": "success", "errors": ""}
+    },
+    {
+      "index": 5,
+      "kind": "final_verified",
+      "agent": "assembler",
+      "message": "Final proof accepted by Lean",
+      "payload": {"proof": "trivial"}
+    }
+  ],
+  "attempts": [
+    {
+      "iteration": 1,
+      "agent": "tactic_agent",
+      "proof": "trivial",
+      "rationale": "Use expected tactics from the curated benchmark metadata.",
+      "verification": {
+        "success": true,
+        "status": "success",
+        "output": "ok",
+        "errors": "",
+        "command": ["lean", "Candidate.lean"],
+        "elapsed_ms": 12
+      }
+    }
+  ],
+  "final_proof": "trivial",
+  "error": "",
+  "elapsed_ms": 35,
+  "token_usage": {}
+}

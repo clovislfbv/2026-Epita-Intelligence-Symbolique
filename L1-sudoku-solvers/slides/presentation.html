@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku · Cinq paradigmes de résolution</title>
+
+<!-- Fonts: Sentient (serif display) + Switzer (body sans) from Fontshare — distinctive, editorial, calm -->
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=sentient@400,500,700,401&f[]=switzer@400,500,600,700&f[]=jetbrains-mono@400,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ===========================================
+   CSS CUSTOM PROPERTIES (THEME — "WHITE NUANCE")
+   Edit these to retune the whole look.
+   =========================================== */
+:root {
+    /* Palette — layered warm whites with a single ink-blue accent */
+    --paper:      #f6f5f1;   /* stage / slide base — warm off-white */
+    --paper-2:    #efede7;   /* secondary panels */
+    --paper-3:    #e7e5dd;   /* card edges / fills */
+    --ink:        #1b1b19;   /* primary text */
+    --muted:      #6f6e67;   /* secondary text */
+    --faint:      #a3a199;   /* tertiary / captions */
+    --line:       rgba(27,27,25,0.10);
+    --line-soft:  rgba(27,27,25,0.06);
+    --accent:     #2b46e0;   /* ink blue — echoes the UI's "found values" */
+    --accent-soft:rgba(43,70,224,0.10);
+    --accent-2:   #b4451f;   /* warm terracotta secondary accent */
+
+    --stage-bg:   #e4e2da;   /* letterbox area behind the stage */
+    --slide-bg:   var(--paper);
+
+    /* Typography — authored at 1920×1080 */
+    --font-display: 'Sentient', Georgia, serif;
+    --font-body:    'Switzer', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+    --title-size:    128px;
+    --h2-size:        64px;
+    --subtitle-size:  32px;
+    --body-size:      27px;
+
+    --slide-padding: 96px;
+    --content-gap:   30px;
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur: 0.7s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE — viewport-base.css (verbatim)
+   =========================================== */
+html, body {
+    width: 100%; height: 100%; margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-viewport {
+    position: fixed; inset: 0; overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-stage {
+    position: absolute; left: 0; top: 0;
+    width: 1920px; height: 1080px;
+    overflow: hidden; transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+.slide {
+    position: absolute; inset: 0;
+    width: 1920px; height: 1080px;
+    overflow: hidden; display: block;
+    visibility: hidden; opacity: 0; pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+.slide.active, .slide.visible {
+    visibility: visible; opacity: 1; pointer-events: auto; z-index: 1;
+}
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls {
+    position: fixed; left: 50%; bottom: 22px;
+    transform: translateX(-50%); z-index: 1000;
+}
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide {
+        position: relative; display: block !important;
+        visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        width: 1920px; height: 1080px;
+        break-after: page; page-break-after: always;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   GLOBAL SLIDE STYLING
+   =========================================== */
+.slide {
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--body-size);
+    line-height: 1.5;
+    padding: var(--slide-padding);
+    /* Subtle paper grain via layered gradients */
+    background:
+        radial-gradient(120% 90% at 100% 0%, rgba(43,70,224,0.04), transparent 55%),
+        radial-gradient(100% 90% at 0% 100%, rgba(180,69,31,0.035), transparent 50%),
+        var(--paper);
+}
+
+/* Faint 9x9 sudoku grid watermark, top-right of every slide */
+.grid-motif {
+    position: absolute; top: -120px; right: -120px;
+    width: 560px; height: 560px;
+    opacity: 0.5; pointer-events: none; z-index: 0;
+}
+.grid-motif .cell { stroke: var(--line); stroke-width: 1; fill: none; }
+.grid-motif .box  { stroke: var(--line); stroke-width: 2.4; fill: none; }
+
+.slide-content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+
+/* Eyebrow / kicker */
+.kicker {
+    font-family: var(--font-mono);
+    font-size: 20px; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500;
+    display: inline-flex; align-items: center; gap: 16px;
+}
+.kicker::before {
+    content: ""; width: 46px; height: 2px; background: var(--accent); display: inline-block;
+}
+
+h2 {
+    font-family: var(--font-display);
+    font-size: var(--h2-size); font-weight: 500;
+    line-height: 1.04; letter-spacing: -0.015em;
+    color: var(--ink);
+}
+h2 em { font-style: italic; color: var(--accent); }
+
+.lead { font-size: var(--subtitle-size); color: var(--muted); max-width: 1150px; line-height: 1.45; }
+.mono { font-family: var(--font-mono); }
+.ink-blue { color: var(--accent); }
+
+/* Page number + footer chrome */
+.slide-foot {
+    position: absolute; left: var(--slide-padding); right: var(--slide-padding); bottom: 54px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 17px; color: var(--faint);
+    letter-spacing: 0.08em; z-index: 3;
+}
+.slide-foot .pg { display: none; } /* page number shown by the global counter instead */
+
+/* ===========================================
+   ANIMATIONS (reveal on .visible)
+   =========================================== */
+.reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.08s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.16s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.24s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.32s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.40s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: 0.48s; }
+.slide.visible [data-d="1"] { transition-delay: 0.30s; }
+.slide.visible [data-d="2"] { transition-delay: 0.40s; }
+.slide.visible [data-d="3"] { transition-delay: 0.50s; }
+.slide.visible [data-d="4"] { transition-delay: 0.60s; }
+.slide.visible [data-d="5"] { transition-delay: 0.70s; }
+
+/* ===========================================
+   TITLE SLIDE
+   =========================================== */
+.title-slide { display: flex; align-items: center; }
+.title-grid { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 80px; align-items: center; width: 100%; z-index: 2; }
+.title-slide h1 {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: var(--title-size); line-height: 0.98; letter-spacing: -0.02em;
+    color: var(--ink); margin: 30px 0 36px;
+}
+.title-slide h1 em { font-style: italic; color: var(--accent); }
+.title-meta { display: flex; flex-direction: column; gap: 8px; color: var(--muted); font-size: 26px; }
+.title-meta strong { color: var(--ink); font-weight: 600; }
+.title-rule { width: 120px; height: 3px; background: var(--accent); margin-top: 40px; }
+
+/* Decorative solved sudoku block on the title */
+.sudoku-art {
+    display: grid; grid-template-columns: repeat(9, 1fr);
+    width: 480px; height: 480px; margin-left: auto;
+    border: 3px solid var(--ink);
+    background: #fff;
+    box-shadow: 0 30px 70px -30px rgba(27,27,25,0.35);
+}
+.sudoku-art div {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 30px; color: var(--ink);
+    border: 1px solid var(--line);
+}
+.sudoku-art div.r { border-right: 2.4px solid var(--ink); }
+.sudoku-art div.b { border-bottom: 2.4px solid var(--ink); }
+.sudoku-art div.found { color: var(--accent); font-weight: 500; }
+.sudoku-art div.given { background: var(--paper-2); }
+
+/* ===========================================
+   SECTION / STANDARD LAYOUTS
+   =========================================== */
+.head-block { margin-bottom: 48px; flex: 0 0 auto; }
+.head-block .kicker { margin-bottom: 24px; }
+
+/* Card grid */
+.cards { display: grid; gap: 26px; }
+.cards.c2 { grid-template-columns: repeat(2, 1fr); }
+.cards.c3 { grid-template-columns: repeat(3, 1fr); }
+.cards.c5 { grid-template-columns: repeat(5, 1fr); }
+.card {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid var(--line);
+    border-radius: 16px; padding: 34px 32px;
+    backdrop-filter: blur(2px);
+}
+.card h3 {
+    font-family: var(--font-display); font-weight: 500; font-size: 32px;
+    margin-bottom: 14px; letter-spacing: -0.01em;
+}
+.card p { color: var(--muted); font-size: 23px; line-height: 1.45; }
+.card .tag {
+    display: inline-block; font-family: var(--font-mono); font-size: 15px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+    background: var(--accent-soft); padding: 5px 12px; border-radius: 999px; margin-bottom: 18px;
+}
+.card .num {
+    font-family: var(--font-display); font-size: 26px; color: var(--faint); font-style: italic;
+}
+
+/* Two-column explainer (solver slides) */
+.two-col { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; align-items: center; }
+.col-text { display: flex; flex-direction: column; gap: 26px; padding-top: 4px; }
+.feature-list { list-style: none; display: flex; flex-direction: column; gap: 18px; }
+.feature-list li { position: relative; padding-left: 38px; font-size: 25px; color: var(--ink); line-height: 1.4; }
+.feature-list li::before {
+    content: ""; position: absolute; left: 0; top: 11px;
+    width: 14px; height: 14px; border: 2.5px solid var(--accent); border-radius: 3px;
+}
+.feature-list li b { font-weight: 600; }
+.feature-list li b::after { content: " : "; color: var(--faint); font-weight: 400; }
+.feature-list li span { color: var(--muted); }
+
+/* Code / formula panel */
+.panel {
+    background: var(--ink); color: #efeee7; border-radius: 18px;
+    padding: 38px 40px; font-family: var(--font-mono); font-size: 22px; line-height: 1.65;
+    box-shadow: 0 30px 60px -34px rgba(27,27,25,0.55);
+    position: relative; overflow: hidden;
+    white-space: pre-wrap;   /* preserve the source line breaks of the code */
+    tab-size: 2;
+}
+.panel .c-key { color: #8fa2ff; }
+.panel .c-str { color: #d9a05b; }
+.panel .c-com { color: #7d8a7d; font-style: italic; }
+.panel .c-acc { color: #ff9a76; }
+.panel .label {
+    position: absolute; top: 16px; right: 22px; font-size: 14px; color: #6b6f6b; letter-spacing: 0.18em; text-transform: uppercase;
+}
+
+/* Stat row */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 8px; }
+.stat { border-left: 3px solid var(--accent); padding-left: 24px; }
+.stat .v { font-family: var(--font-display); font-size: 60px; line-height: 1; color: var(--ink); }
+.stat .v small { font-size: 30px; color: var(--muted); }
+.stat .k { font-size: 21px; color: var(--muted); margin-top: 10px; }
+
+/* Comparison table */
+.ctable { width: 100%; border-collapse: collapse; font-size: 23px; }
+.ctable th, .ctable td { text-align: left; padding: 20px 22px; border-bottom: 1px solid var(--line); }
+.ctable thead th {
+    font-family: var(--font-mono); font-size: 16px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500; border-bottom: 2px solid var(--ink);
+}
+.ctable td:first-child { font-weight: 600; }
+.ctable .mono { font-family: var(--font-mono); font-size: 20px; }
+.ctable .ok { color: var(--accent); font-weight: 600; }
+.ctable .warn { color: var(--accent-2); font-weight: 600; }
+.ctable tbody tr:hover { background: rgba(255,255,255,0.5); }
+.ctable tr.best { background: var(--accent-soft); }
+.ctable tr.best td:first-child::after { content: " ★"; color: var(--accent); }
+
+/* Result callout banner */
+.callout {
+    display: flex; align-items: center; gap: 22px;
+    background: var(--ink); color: #f3f2ec; border-radius: 16px;
+    padding: 26px 34px; margin-top: 34px;
+    box-shadow: 0 26px 54px -32px rgba(27,27,25,0.5);
+}
+.callout .badge {
+    font-family: var(--font-mono); font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink); background: var(--accent); padding: 8px 14px; border-radius: 999px; white-space: nowrap;
+    font-weight: 600;
+}
+.callout p { font-size: 24px; line-height: 1.4; color: #e7e6df; }
+.callout b { color: #fff; }
+
+/* Big closing statement */
+.closing { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+.closing h2 { font-size: 96px; line-height: 1.02; max-width: 1400px; }
+.closing .lead { margin-top: 36px; font-size: 34px; }
+
+/* Pipeline flow */
+.flow { display: flex; align-items: stretch; gap: 0; margin-top: 20px; }
+.flow .step {
+    flex: 1; background: rgba(255,255,255,0.55); border: 1px solid var(--line);
+    padding: 30px 26px; position: relative;
+}
+.flow .step:not(:last-child) { border-right: none; }
+.flow .step:first-child { border-radius: 14px 0 0 14px; }
+.flow .step:last-child { border-radius: 0 14px 14px 0; }
+.flow .step .s-no { font-family: var(--font-mono); color: var(--accent); font-size: 16px; letter-spacing: 0.1em; }
+.flow .step h4 { font-family: var(--font-display); font-weight: 500; font-size: 27px; margin: 12px 0 10px; }
+.flow .step p { color: var(--muted); font-size: 19px; line-height: 1.4; }
+.flow .step::after {
+    content: "→"; position: absolute; right: -15px; top: 50%; transform: translateY(-50%);
+    color: var(--accent); font-size: 26px; z-index: 3; background: var(--paper); padding: 0 2px;
+}
+.flow .step:last-child::after { display: none; }
+
+/* ===========================================
+   EDIT MODE
+   =========================================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+    position: fixed; top: 18px; left: 18px; z-index: 10001;
+    width: 50px; height: 50px; border-radius: 12px; border: 1px solid var(--line);
+    background: #fff; font-size: 22px; cursor: pointer; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease; box-shadow: 0 8px 24px -10px rgba(0,0,0,0.3);
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--accent); color: #fff; }
+[contenteditable="true"] { outline: 2px dashed var(--accent); outline-offset: 4px; border-radius: 4px; cursor: text; }
+
+/* Progress + counter chrome */
+.deck-progress {
+    position: fixed; left: 0; bottom: 0; height: 4px; background: var(--accent);
+    z-index: 1000; transition: width 0.4s var(--ease);
+}
+.deck-counter {
+    position: fixed; right: 26px; bottom: 20px; z-index: 1000;
+    font-family: var(--font-mono); font-size: 16px; color: var(--muted); letter-spacing: 0.1em;
+}
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+    <!-- ============ SLIDE 1 — TITLE ============ -->
+    <section class="slide title-slide active">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="title-grid">
+            <div>
+                <span class="kicker reveal">EPITA 2026 · Intelligence Symbolique · L1</span>
+                <h1 class="reveal">Résoudre le Sudoku,<br><em>cinq paradigmes</em><br>en parallèle.</h1>
+                <div class="title-meta reveal">
+                    <span><strong>Backtracking · DLX · CP-SAT · SAT · Génétique</strong></span>
+                    <span>Une interface commune, un banc d'essai instrumenté.</span>
+                </div>
+                <div class="title-rule reveal"></div>
+            </div>
+            <div class="reveal">
+                <div class="sudoku-art" id="sudokuArt"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SLIDE 2 — CONTEXTE ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Le problème</span>
+                <h2 class="reveal">Un même casse-tête,<br><em>plusieurs façons de raisonner</em>.</h2>
+            </div>
+            <p class="lead reveal" style="margin-bottom:48px;">Le Sudoku est un problème de <b>satisfaction de contraintes</b> : 81 cases, des chiffres 1–9, et trois familles de règles (lignes, colonnes, blocs). Résoudre une grille générale est <b>NP-complet</b>, un terrain idéal pour confronter des paradigmes de l'IA symbolique.</p>
+            <div class="cards c3">
+                <div class="card reveal"><div class="tag">Recherche</div><h3>Explorer</h3><p>Parcourir l'arbre des affectations en élaguant tôt les impasses.</p></div>
+                <div class="card reveal"><div class="tag">Contraintes</div><h3>Déduire</h3><p>Encoder les règles et laisser un solveur prouver la cohérence.</p></div>
+                <div class="card reveal"><div class="tag">Métaheuristique</div><h3>Approcher</h3><p>Faire évoluer des solutions candidates vers zéro conflit.</p></div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>Sudoku · 5 solveurs</span><span class="pg">02</span></div>
+    </section>
+
+    <!-- ============ SLIDE 2b — OBJECTIFS ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Objectifs du projet</span>
+                <h2 class="reveal">Cinq solveurs, <em>une démarche scientifique</em>.</h2>
+            </div>
+            <div class="cards c5" style="margin-top:6px;">
+                <div class="card reveal"><div class="num">01</div><h3 style="font-size:25px;">Implémenter</h3><p>Cinq solveurs distincts : backtracking, DLX, CP-SAT, SAT, génétique.</p></div>
+                <div class="card reveal"><div class="num">02</div><h3 style="font-size:25px;">Benchmarker</h3><p>Une batterie de grilles de difficulté croissante, dont des grilles à solutions multiples.</p></div>
+                <div class="card reveal"><div class="num">03</div><h3 style="font-size:25px;">Mesurer</h3><p>Comparer temps, nœuds explorés et pic mémoire de chaque approche.</p></div>
+                <div class="card reveal"><div class="num">04</div><h3 style="font-size:25px;">Analyser</h3><p>Complexités théoriques et mécanismes de propagation propres à chaque méthode.</p></div>
+                <div class="card reveal"><div class="num">05</div><h3 style="font-size:25px;">Identifier</h3><p>Les classes de grilles où chaque solveur excelle ou échoue.</p></div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>Objectifs</span><span class="pg">03</span></div>
+    </section>
+
+    <!-- ============ SLIDE 5 — BACKTRACKING ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Solveur 01 · Recherche arborescente</span>
+                <h2 class="reveal">Backtracking <em>MRV + forward checking</em>.</h2>
+            </div>
+            <div class="two-col">
+                <div class="col-text reveal">
+                    <ul class="feature-list">
+                        <li><b>Bitmask de candidats</b> <span>chaque case garde ses valeurs possibles sur 9 bits.</span></li>
+                        <li><b>Heuristique MRV</b> <span>on branche sur la case la plus contrainte (moins de candidats).</span></li>
+                        <li><b>Forward checking</b> <span>l'affectation élague immédiatement la valeur chez les 20 pairs.</span></li>
+                        <li><b>Complet</b> <span>trouve toujours la solution, où un « nœud » correspond à une tentative d'affectation.</span></li>
+                    </ul>
+                </div>
+                <div class="panel reveal" data-d="2">
+                    <span class="label">backtracking.py</span>
+FULL_MASK = <span class="c-str">0b111111111</span>  <span class="c-com"># 1..9</span>
+
+<span class="c-key">def</span> <span class="c-acc">solve</span>(grid):
+    cell = <span class="c-acc">min</span>(empty, key=candidate_count)
+    <span class="c-key">for</span> v <span class="c-key">in</span> candidates(cell):
+        assign(cell, v)
+        prune_peers(cell, v)   <span class="c-com"># forward check</span>
+        <span class="c-key">if</span> solve(grid): <span class="c-key">return</span> <span class="c-str">True</span>
+        undo(cell, v)
+    <span class="c-key">return</span> <span class="c-str">False</span>
+                </div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>Backtracking · pure Python</span><span class="pg">05</span></div>
+    </section>
+
+    <!-- ============ SLIDE 6 — DLX ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Solveur 02 · Couverture exacte</span>
+                <h2 class="reveal">Dancing Links <em>·  l'Algorithme X de Knuth</em>.</h2>
+            </div>
+            <div class="two-col">
+                <div class="col-text reveal">
+                    <ul class="feature-list">
+                        <li><b>Reformulation</b> <span>le Sudoku devient un problème de couverture exacte (729 lignes × 324 contraintes).</span></li>
+                        <li><b>Dancing Links</b> <span>liste doublement chaînée où couvrir/découvrir une colonne est O(1).</span></li>
+                        <li><b>Backtracking déterministe</b> <span>choisir la colonne la plus contrainte, brancher, restaurer.</span></li>
+                        <li><b>Énumération exacte</b> <span>sert aussi à <b>certifier l'unicité</b> des grilles générées.</span></li>
+                    </ul>
+                </div>
+                <div class="panel reveal" data-d="2">
+                    <span class="label">algorithme X</span>
+<span class="c-com"># 4 familles de contraintes :</span>
+<span class="c-com">#  · une valeur par case</span>
+<span class="c-com">#  · chaque valeur 1× par ligne</span>
+<span class="c-com">#  · chaque valeur 1× par colonne</span>
+<span class="c-com">#  · chaque valeur 1× par bloc</span>
+
+cover(col); search(k+1); uncover(col)
+<span class="c-acc">→</span> <span class="c-str">324</span> colonnes, <span class="c-str">729</span> lignes
+                </div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>DLX · pure Python</span><span class="pg">06</span></div>
+    </section>
+
+    <!-- ============ SLIDE 7 — CP-SAT ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Solveur 03 · Programmation par contraintes</span>
+                <h2 class="reveal">CP-SAT <em>· déclarer, pas dérouler</em>.</h2>
+            </div>
+            <div class="two-col">
+                <div class="col-text reveal">
+                    <ul class="feature-list">
+                        <li><b>Variables entières</b> <span>une variable 1–9 par case.</span></li>
+                        <li><b>Contraintes globales</b> <span>trois familles d'<b>AllDifferent</b> : lignes, colonnes, blocs.</span></li>
+                        <li><b>Moteur OR-Tools</b> <span>propagation + recherche CDCL hybride, hautement optimisé.</span></li>
+                        <li><b>Métrique</b> <span>le nombre de <i>branches</i> explorées est remonté comme nœuds.</span></li>
+                    </ul>
+                </div>
+                <div class="panel reveal" data-d="2">
+                    <span class="label">cp_sat.py · OR-Tools</span>
+m = cp_model.<span class="c-acc">CpModel</span>()
+x = [[m.<span class="c-acc">NewIntVar</span>(<span class="c-str">1</span>,<span class="c-str">9</span>) <span class="c-key">for</span> _ <span class="c-key">in</span> row]
+     <span class="c-key">for</span> row <span class="c-key">in</span> grid]
+
+<span class="c-key">for</span> line <span class="c-key">in</span> rows+cols+boxes:
+    m.<span class="c-acc">AddAllDifferent</span>(line)
+
+solver.<span class="c-acc">Solve</span>(m)   <span class="c-com"># branches → nodes</span>
+                </div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>CP-SAT · ortools</span><span class="pg">07</span></div>
+    </section>
+
+    <!-- ============ SLIDE 8 — SAT ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Solveur 04 · Satisfiabilité booléenne</span>
+                <h2 class="reveal">SAT <em>· tout réduit à des clauses</em>.</h2>
+            </div>
+            <div class="two-col">
+                <div class="col-text reveal">
+                    <ul class="feature-list">
+                        <li><b>Encodage 9·9·9</b> <span>variable <span class="mono">v(r,c,d)</span> vraie ssi la case (r,c) vaut d → 729 variables.</span></li>
+                        <li><b>Clauses</b> <span>« au moins une » + « au plus une » par case, ligne, colonne et bloc.</span></li>
+                        <li><b>Encodage étendu</b> <span>clauses redondantes implicites qui accélèrent la propagation unitaire.</span></li>
+                        <li><b>Solveur Glucose</b> <span>via PySAT, où les <i>conflits CDCL</i> servent de compteur de nœuds.</span></li>
+                    </ul>
+                </div>
+                <div class="panel reveal" data-d="2">
+                    <span class="label">sat.py · PySAT / Glucose3</span>
+<span class="c-com"># v(r,c,d) : 729 variables DIMACS</span>
+<span class="c-key">def</span> <span class="c-acc">var</span>(r,c,d): <span class="c-key">return</span> r*<span class="c-str">81</span>+c*<span class="c-str">9</span>+(d-<span class="c-str">1</span>)+<span class="c-str">1</span>
+
+<span class="c-com"># au-moins-un / au-plus-un</span>
+clauses += at_least_one(cell)
+clauses += at_most_one(cell)   <span class="c-com"># paires</span>
+
+Glucose3(clauses).<span class="c-acc">solve</span>()
+                </div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>SAT · python-sat</span><span class="pg">08</span></div>
+    </section>
+
+    <!-- ============ SLIDE 9 — GENETIQUE ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Solveur 05 · Métaheuristique</span>
+                <h2 class="reveal">Algorithme génétique <em>· évoluer vers zéro conflit</em>.</h2>
+            </div>
+            <div class="two-col">
+                <div class="col-text reveal">
+                    <ul class="feature-list">
+                        <li><b>Chromosome malin</b> <span>chaque ligne est une permutation 1–9 respectant ses indices : les lignes sont correctes par construction.</span></li>
+                        <li><b>Fitness</b> <span>compte uniquement les doublons en colonnes et blocs.</span></li>
+                        <li><b>Évolution</b> <span>sélection, élitisme, croisement et mutation par échange.</span></li>
+                        <li><b>Incomplet</b> <span>réussit easy/medium, se dégrade sur les grilles difficiles → taux de succès sur plusieurs graines.</span></li>
+                    </ul>
+                </div>
+                <div class="panel reveal" data-d="2">
+                    <span class="label">genetic.py</span>
+population = <span class="c-str">200</span>;  generations = <span class="c-str">400</span>
+elite = <span class="c-str">10</span>;        mutation = <span class="c-str">0.25</span>
+
+<span class="c-key">while</span> gen &lt; budget:
+    rank_by_fitness(pop)       <span class="c-com"># conflits</span>
+    pop = elites + crossover(parents)
+    mutate(pop)
+    <span class="c-key">if</span> best.conflicts == <span class="c-str">0</span>: <span class="c-key">break</span>
+                </div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>Génétique · pure Python</span><span class="pg">09</span></div>
+    </section>
+
+    <!-- ============ SLIDE 10 — BANC D'ESSAI ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Banc d'essai</span>
+                <h2 class="reveal">Mesurer, comparer, <em>reproduire</em>.</h2>
+            </div>
+            <p class="lead reveal" style="margin-bottom:40px;">Chaque solveur s'exécute dans un <b>processus isolé sous timeout</b> sur des grilles de difficulté croissante (easy → very_hard, 17 indices, multi-solutions).</p>
+            <div class="flow reveal" data-d="2">
+                <div class="step"><div class="s-no">01</div><h4>Instances</h4><p>Batterie de grilles + générateur (unicité par DLX)</p></div>
+                <div class="step"><div class="s-no">02</div><h4>Benchmark</h4><p>Exécution isolée, sous timeout → CSV</p></div>
+                <div class="step"><div class="s-no">03</div><h4>Métriques</h4><p>Temps · nœuds / conflits · pic mémoire</p></div>
+                <div class="step"><div class="s-no">04</div><h4>Rapport</h4><p>Agrégation pandas, graphiques, analyse</p></div>
+            </div>
+            <div class="stats reveal" data-d="3" style="margin-top:60px;">
+                <div class="stat"><div class="v">5</div><div class="k">paradigmes comparés</div></div>
+                <div class="stat"><div class="v">3</div><div class="k">métriques par exécution</div></div>
+                <div class="stat"><div class="v">5<small> buckets</small></div><div class="k">easy → very_hard</div></div>
+            </div>
+        </div>
+        <div class="slide-foot"><span>Méthodologie</span><span class="pg">10</span></div>
+    </section>
+
+    <!-- ============ DEMONSTRATION (avant l'analyse des résultats) ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Démonstration</span>
+                <h2 class="reveal">Une interface <em>Streamlit</em> pour jouer &amp; comparer.</h2>
+            </div>
+            <div class="cards c2" style="margin-top:8px;">
+                <div class="card reveal" data-d="1" style="padding:44px;">
+                    <div class="tag">🧩 Playground</div>
+                    <h3 style="font-size:38px;">Choisir, générer, résoudre</h3>
+                    <p style="font-size:24px;margin-top:14px;">Saisir ou générer une grille à la difficulté voulue, lancer un ou plusieurs solveurs, et voir la solution : <span class="ink-blue">indices en noir, valeurs trouvées en bleu</span>. Comparaison des métriques en direct.</p>
+                </div>
+                <div class="card reveal" data-d="2" style="padding:44px;">
+                    <div class="tag">📊 Dashboard</div>
+                    <h3 style="font-size:38px;">Explorer les benchmarks</h3>
+                    <p style="font-size:24px;margin-top:14px;">Charger un CSV de résultats et explorer les <b>taux de succès</b> et les temps / nœuds par bucket via des graphiques interactifs.</p>
+                </div>
+            </div>
+            <div class="panel reveal" data-d="3" style="margin-top:42px;font-size:21px;padding:28px 38px;">
+                <span class="label">cli</span>
+$ sudoku-bench solve <span class="c-str">"53..7....6..195...."</span> --solver dlx
+$ sudoku-bench benchmark --solvers all --buckets all
+$ streamlit run ui/app.py
+            </div>
+        </div>
+        <div class="slide-foot"><span>Démo · Streamlit + CLI</span><span class="pg">11</span></div>
+    </section>
+
+    <!-- ============ SLIDE 11 — RESULTATS MESURES (real benchmark data) ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Résultats mesurés · 104 résolutions</span>
+                <h2 class="reveal">Quel solveur <em>l'emporte</em> ?</h2>
+            </div>
+            <table class="ctable reveal" data-d="2" style="font-size:22px;">
+                <thead><tr><th>Solveur</th><th>Réussite</th><th>Temps moyen</th><th>Grille 17 indices</th><th>Mémoire</th></tr></thead>
+                <tbody>
+                    <tr class="best"><td>DLX</td><td class="ok">16/16</td><td class="mono">2,4 ms</td><td class="mono ok">2,7 ms (stable)</td><td class="mono">0,4 Mo</td></tr>
+                    <tr><td>SAT</td><td class="ok">16/16</td><td class="mono">27 ms</td><td class="mono">27 ms (constant)</td><td class="mono">3,3 Mo</td></tr>
+                    <tr><td>CP-SAT</td><td class="ok">16/16</td><td class="mono">485 ms</td><td class="mono">0,5 s (constant)</td><td class="mono warn">34 Mo</td></tr>
+                    <tr><td>Backtracking</td><td class="ok">14/14</td><td class="mono">&lt; 2 ms</td><td class="mono warn">3,6 s · 431k nœuds</td><td class="mono">0,02 Mo</td></tr>
+                    <tr><td>Génétique</td><td class="warn">15/42</td><td class="mono">3,4 s</td><td class="mono warn">échec</td><td class="mono">0,6 Mo</td></tr>
+                </tbody>
+            </table>
+            <div class="callout reveal" data-d="3">
+                <span class="badge">Gagnant · DLX</span>
+                <p>Dancing Links est <b>le plus rapide et le plus régulier</b> : ~2,5 ms quelle que soit la difficulté, là où le backtracking explose sur les grilles minimales et où CP-SAT paie un lourd surcoût mémoire.</p>
+            </div>
+        </div>
+        <div class="slide-foot"><span>Résultats mesurés</span><span class="pg">11</span></div>
+    </section>
+
+    <!-- ============ SLIDE 11b — EXCELLE / ECHOUE + COMPLEXITE ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content">
+            <div class="head-block">
+                <span class="kicker reveal">Analyse</span>
+                <h2 class="reveal">Où chaque solveur <em>excelle ou échoue</em>.</h2>
+            </div>
+            <table class="ctable reveal" data-d="2" style="font-size:21px;">
+                <thead><tr><th>Solveur</th><th>Complexité / mécanisme</th><th>Excelle sur</th><th>Limite observée</th></tr></thead>
+                <tbody>
+                    <tr><td>Backtracking</td><td class="mono">O(9ⁿ), élagage MRV + forward checking</td><td>Grilles à indices nombreux</td><td class="warn">minimal-17 : 431k nœuds, 3,6 s</td></tr>
+                    <tr><td>DLX</td><td class="mono">Couverture exacte, liens O(1)</td><td class="ok">Toutes difficultés (≈ 2,5 ms)</td><td>Coût mémoire des liens</td></tr>
+                    <tr><td>CP-SAT</td><td class="mono">Propagation AllDifferent + CDCL</td><td class="ok">Multi-solutions, grandes instances</td><td class="warn">Surcoût fixe ~0,5 s, 34 Mo</td></tr>
+                    <tr><td>SAT</td><td class="mono">CDCL sur 729 variables CNF</td><td class="ok">Temps constant, toute difficulté</td><td>Sensible à l'encodage</td></tr>
+                    <tr><td>Génétique</td><td class="mono">Métaheuristique stochastique</td><td>easy (9/12), medium (5/9)</td><td class="warn">hard / very_hard / 17 : 0 succès</td></tr>
+                </tbody>
+            </table>
+            <p class="lead reveal" data-d="3" style="margin-top:32px;font-size:27px;">Les quatre solveurs <b>complets</b> résolvent tout. Seule la <b>recherche naïve</b> souffre de l'explosion combinatoire, et la <b>métaheuristique</b>, incomplète, plafonne dès les grilles difficiles.</p>
+        </div>
+        <div class="slide-foot"><span>Excelle / échoue · complexité</span><span class="pg">12</span></div>
+    </section>
+
+    <!-- ============ SLIDE 13 — CONCLUSION ============ -->
+    <section class="slide">
+        <svg class="grid-motif" viewBox="0 0 9 9"></svg>
+        <div class="slide-content closing">
+            <span class="kicker reveal">Conclusion</span>
+            <h2 class="reveal">Un même problème<br>éclairé par <em>cinq regards</em>.</h2>
+            <p class="lead reveal">L'interface commune transforme cinq paradigmes en une expérience comparable et mesurable, du backtracking le plus simple au solveur de contraintes industriel. <b>Perspectives :</b> grilles 16×16, solveur SMT, et apprentissage de l'ordre de branchement.</p>
+            <div class="title-rule reveal" style="margin-top:50px;"></div>
+            <p class="reveal mono" style="color:var(--muted);margin-top:30px;font-size:21px;">EPITA 2026 · Intelligence Symbolique · Projet L1 · Merci.</p>
+        </div>
+        <div class="slide-foot"><span>Questions ?</span><span class="pg">13</span></div>
+    </section>
+
+</main>
+</div>
+
+<!-- Chrome -->
+<div class="deck-progress" id="deckProgress"></div>
+<div class="deck-counter" id="deckCounter">01 / 13</div>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Mode édition (E)">✏️</button>
+
+<script>
+/* ===========================================
+   DECORATIVE SUDOKU RENDERING
+   =========================================== */
+// Faint 9x9 grid watermark on every slide (SVG)
+(function buildGridMotifs() {
+    const ns = "http://www.w3.org/2000/svg";
+    document.querySelectorAll('.grid-motif').forEach(svg => {
+        for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++) {
+            const cell = document.createElementNS(ns, 'rect');
+            cell.setAttribute('x', c); cell.setAttribute('y', r);
+            cell.setAttribute('width', 1); cell.setAttribute('height', 1);
+            cell.setAttribute('class', 'cell'); svg.appendChild(cell);
+        }
+        for (let i = 0; i <= 9; i += 3) {
+            const v = document.createElementNS(ns, 'line');
+            v.setAttribute('x1', i); v.setAttribute('y1', 0); v.setAttribute('x2', i); v.setAttribute('y2', 9);
+            v.setAttribute('class', 'box'); svg.appendChild(v);
+            const h = document.createElementNS(ns, 'line');
+            h.setAttribute('x1', 0); h.setAttribute('y1', i); h.setAttribute('x2', 9); h.setAttribute('y2', i);
+            h.setAttribute('class', 'box'); svg.appendChild(h);
+        }
+    });
+})();
+
+// Title-slide solved grid: givens (black) + found values (blue)
+(function buildSudokuArt() {
+    const art = document.getElementById('sudokuArt');
+    if (!art) return;
+    // A real solved grid; "1" marks a given (clue), "0" a found value
+    const solved = [
+        5,3,4,6,7,8,9,1,2, 6,7,2,1,9,5,3,4,8, 1,9,8,3,4,2,5,6,7,
+        8,5,9,7,6,1,4,2,3, 4,2,6,8,5,3,7,9,1, 7,1,3,9,2,4,8,5,6,
+        9,6,1,5,3,7,2,8,4, 2,8,7,4,1,9,6,3,5, 3,4,5,2,8,6,1,7,9
+    ];
+    const given = "100100000010010100001000100100010001010000010100010001001000100010010010000100100";
+    for (let i = 0; i < 81; i++) {
+        const d = document.createElement('div');
+        const r = Math.floor(i / 9), c = i % 9;
+        d.textContent = solved[i];
+        if (given[i] === '1') d.classList.add('given'); else d.classList.add('found');
+        if (c === 2 || c === 5) d.classList.add('r');
+        if (r === 2 || r === 5) d.classList.add('b');
+        art.appendChild(d);
+    }
+})();
+
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.progress = document.getElementById('deckProgress');
+        this.counter = document.getElementById('deckCounter');
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.showSlide(0);
+    }
+    setupStageScale() {
+        const scale = () => {
+            const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * f) / 2;
+            const y = (window.innerHeight - 1080 * f) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') return;
+            if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); this.next(); }
+            else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.prev(); }
+            else if (e.key === 'Home') this.showSlide(0);
+            else if (e.key === 'End') this.showSlide(this.slides.length - 1);
+        });
+    }
+    setupTouchNav() {
+        let x0 = null;
+        window.addEventListener('touchstart', e => x0 = e.touches[0].clientX, { passive: true });
+        window.addEventListener('touchend', e => {
+            if (x0 === null) return;
+            const dx = e.changedTouches[0].clientX - x0;
+            if (Math.abs(dx) > 50) dx < 0 ? this.next() : this.prev();
+            x0 = null;
+        }, { passive: true });
+    }
+    setupWheelNav() {
+        let lock = false;
+        window.addEventListener('wheel', (e) => {
+            if (lock) return;
+            if (Math.abs(e.deltaY) < 24) return;
+            lock = true; e.deltaY > 0 ? this.next() : this.prev();
+            setTimeout(() => lock = false, 700);
+        }, { passive: true });
+    }
+    next() { this.showSlide(this.currentSlide + 1); }
+    prev() { this.showSlide(this.currentSlide - 1); }
+    showSlide(i) {
+        this.currentSlide = Math.max(0, Math.min(i, this.slides.length - 1));
+        this.slides.forEach((s, k) => {
+            s.classList.toggle('active', k === this.currentSlide);
+            s.classList.toggle('visible', k === this.currentSlide);
+        });
+        const n = this.currentSlide + 1, total = this.slides.length;
+        this.progress.style.width = (n / total * 100) + '%';
+        this.counter.textContent = String(n).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    }
+}
+const deck = new SlidePresentation();
+
+/* ===========================================
+   INLINE EDITING (post-draft affordance)
+   =========================================== */
+const editor = {
+    isActive: false,
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        const btn = document.getElementById('editToggle');
+        btn.classList.toggle('active', this.isActive);
+        btn.classList.toggle('show', this.isActive);
+        document.querySelectorAll('.slide h1, .slide h2, .slide h3, .slide h4, .slide p, .slide li, .slide span, .slide td')
+            .forEach(el => el.setAttribute('contenteditable', this.isActive));
+        if (!this.isActive) localStorage.setItem('sudoku-deck-html', document.querySelector('.deck-stage').innerHTML);
+    }
+};
+// restore edits
+const saved = localStorage.getItem('sudoku-deck-html');
+if (saved) { /* kept opt-in: uncomment to auto-restore */ }
+
+const hotzone = document.querySelector('.edit-hotzone');
+const editToggle = document.getElementById('editToggle');
+let hideTimeout = null;
+hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); editToggle.classList.add('show'); });
+hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400); });
+editToggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+editToggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400); });
+editToggle.addEventListener('click', () => editor.toggleEditMode());
+hotzone.addEventListener('click', () => editor.toggleEditMode());
+document.addEventListener('keydown', (e) => {
+    if ((e.key === 'e' || e.key === 'E') && e.target.getAttribute('contenteditable') !== 'true') editor.toggleEditMode();
+    if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        localStorage.setItem('sudoku-deck-html', document.querySelector('.deck-stage').innerHTML);
+    }
+});
+</script>
+</body>
+</html>

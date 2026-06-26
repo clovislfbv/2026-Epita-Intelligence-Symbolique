@@ -1,0 +1,16 @@
+# Couche 1 — HMM
+hmmlearn>=0.3        # GaussianHMM (simple : fit / predict / predict_proba)
+scikit-learn>=1.2
+
+# Données + calcul
+yfinance>=0.2        # téléchargement des prix
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+
+# Notebook
+jupyter
+
+# Optionnel — version "bayésienne" du HMM (cf. PyMC-HMM-Trading-Alpha.ipynb)
+# pymc>=5.0
+# arviz>=0.14
