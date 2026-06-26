@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "RCC8_spacial_calculus"
+version = "0.1.0"
+description = "Raisonnement spatial qualitatif basé sur RCC8"
+authors = [
+    { name = "coraline.carpin", email = "coraline.carpin@epita.fr" },
+    { name = "mustapha.oumeziane", email = "mustapha.oumeziane@epita.fr" }
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "networkx",
+    "matplotlib",
+    "jupyter",
+]
+
+[tool.setuptools]
+packages = ["rcc8"]
+
+[tool.setuptools.package-dir]
+"" = "."

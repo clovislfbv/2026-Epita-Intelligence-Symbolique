@@ -1,0 +1,1 @@
+from .relations import RCC8, inverse_relation, is_symmetric
