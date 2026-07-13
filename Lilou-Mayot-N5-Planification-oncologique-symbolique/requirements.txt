@@ -1,0 +1,10 @@
+owlready2>=0.46
+z3-solver>=4.13
+pymc>=5.0
+arviz>=0.18
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+scipy>=1.0
+jupyter>=1.0
+ipykernel>=6.0
